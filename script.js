@@ -137,14 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
      // ===== PIN MODAL & SEND MONEY =====
-  const sendForm = document.getElementById("send-money-form");
-  const toggleTransferBtn = document.getElementById("toggle-transfer-btn");
-  const transactionsList = document.querySelector(".transactions-card ul");
-  const payBillForm = document.getElementById("pay-bill-form");
-  const requestMoneyForm = document.getElementById("request-money-form");
-  const balanceEl = document.querySelector(".balance");
+     const balanceEl = document.querySelector(".balance");
 
-  let totalBalance = parseFloat(localStorage.getItem("totalBalance")) || parseFloat(balanceEl.textContent.replace(/[$,]/g, "")) || 0;
+     let totalBalance = parseFloat(localStorage.getItem("totalBalance")) || 
+     parseFloat(balanceEl.textContent.replace(/[$,]/g, "")) || 0;
 
   // ===== PIN MODAL =====
   const pinModal = document.createElement("div");
