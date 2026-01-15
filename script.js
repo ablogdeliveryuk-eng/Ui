@@ -1,3 +1,9 @@
+if (
+  window.location.pathname.endsWith("dashboard.html") &&
+  !localStorage.getItem("loggedIn")
+) {
+  window.location.href = "index.html";
+}
 document.addEventListener("DOMContentLoaded", () => {
   // ===== GLOBAL DEMO USER =====
   let demoUser = JSON.parse(localStorage.getItem("demoUser"));
