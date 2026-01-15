@@ -131,173 +131,183 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "index.html";
     });
 
-    // ===== TOGGLE TRANSFER FORM =====
-    if (toggleTransferBtn && sendForm) {
-      toggleTransferBtn.addEventListener("click", () => {
-        sendForm.style.display = sendForm.style.display === "block" ? "none" : "block";
-        toggleTransferBtn.textContent = sendForm.style.display === "block" ? "Hide Transfer Form" : "Transfer Funds";
-      });
+     // ===== PIN MODAL & SEND MONEY =====
+if (window.location.pathname.endsWith("dashboard.html")) {
+  const sendForm = document.getElementById("send-money-form");
+  const toggleTransferBtn = document.getElementById("toggle-transfer-btn");
+  const transactionsList = document.querySelector(".transactions-card ul");
+  const payBillForm = document.getElementById("pay-bill-form");
+  const requestMoneyForm = document.getElementById("request-money-form");
+  const balanceEl = document.querySelector(".balance");
+
+  let totalBalance = parseFloat(localStorage.getItem("totalBalance")) || parseFloat(balanceEl.textContent.replace(/[$,]/g, "")) || 0;
+
+  // ===== PIN MODAL =====
+  const pinModal = document.createElement("div");
+  pinModal.id = "pinModal";
+  pinModal.style.cssText = "display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;font-family:Arial,sans-serif;";
+  pinModal.innerHTML = `
+    <div style="background:#fff;padding:25px 30px;border-radius:15px;width:320px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+      <h3 style="margin-bottom:15px;color:#333;">Enter PIN</h3>
+      <p style="color:#666;font-size:14px;margin-bottom:15px;">For security, enter your 4-digit PIN.</p>
+      <input type="password" id="transactionPin" placeholder="••••" style="width:80%;padding:10px;font-size:16px;border-radius:8px;border:1px solid #ccc;text-align:center;letter-spacing:5px;">
+      <div style="margin-top:20px;">
+        <button id="confirmPinBtn" style="padding:8px 20px;background:#007bff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Confirm</button>
+        <button id="cancelPinBtn" style="padding:8px 20px;background:#ccc;color:#333;border:none;border-radius:8px;cursor:pointer;font-size:14px;margin-left:10px;">Cancel</button>
+      </div>
+      <div id="pinMessage" style="color:red;margin-top:10px;font-size:13px;"></div>
+    </div>
+  `;
+  document.body.appendChild(pinModal);
+
+  const confirmPinBtn = document.getElementById("confirmPinBtn");
+  const cancelPinBtn = document.getElementById("cancelPinBtn");
+  const transactionPinInput = document.getElementById("transactionPin");
+  const pinMessage = document.getElementById("pinMessage");
+  const sendBtn = document.getElementById("sendBtn"); // Make sure your send money button has id="sendBtn"
+  const maxAttempts = 3;
+  let attemptsLeft = maxAttempts;
+
+  function processTransaction(type, text, amount, status = "completed") {
+    const amtValue = parseFloat(amount);
+    if (type === "expense") totalBalance -= amtValue;
+    if (type === "income") totalBalance += amtValue;
+
+    // Save transaction
+    const savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    savedTransactions.unshift({
+      type: type,
+      text: text,
+      amount: "$" + amtValue.toFixed(2),
+      date: new Date().toISOString().split('T')[0],
+      status: status
+    });
+    localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+    localStorage.setItem("totalBalance", totalBalance);
+
+    // Update balance display
+    if (balanceEl) balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Add to transaction list
+    if (transactionsList) {
+      const li = document.createElement("li");
+      li.classList.add(type);
+      li.innerHTML = `<span>${text}</span><span>${type === "expense" ? "-$" : "$"}${amtValue.toLocaleString()}</span>`;
+      transactionsList.insertBefore(li, transactionsList.firstChild);
     }
 
-    // ===== PIN MODAL =====
-    const pinModal = document.createElement("div");
-    pinModal.id = "pinModal";
-    pinModal.style.cssText = "display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;font-family:Arial,sans-serif;";
-    pinModal.innerHTML = `
-      <div style="background:#fff;padding:25px 30px;border-radius:15px;width:320px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
-        <h3 style="margin-bottom:15px;color:#333;">Enter PIN</h3>
-        <p style="color:#666;font-size:14px;margin-bottom:15px;">For security, enter your 4-digit PIN.</p>
-        <input type="password" id="transactionPin" placeholder="••••" style="width:80%;padding:10px;font-size:16px;border-radius:8px;border:1px solid #ccc;text-align:center;letter-spacing:5px;">
-        <div style="margin-top:20px;">
-          <button id="confirmPinBtn" style="padding:8px 20px;background:#007bff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Confirm</button>
-          <button id="cancelPinBtn" style="padding:8px 20px;background:#ccc;color:#333;border:none;border-radius:8px;cursor:pointer;font-size:14px;margin-left:10px;">Cancel</button>
-        </div>
-        <div id="pinMessage" style="color:red;margin-top:10px;font-size:13px;"></div>
-      </div>
-    `;
-    document.body.appendChild(pinModal);
+    // Show success modal
+    const successModal = document.getElementById("success-modal");
+    if (status === "completed" && successModal) {
+      successModal.style.display = "flex";
+      document.getElementById("r-id").textContent = Math.floor(Math.random() * 1000000);
+      document.getElementById("r-name").textContent = text;
+      document.getElementById("r-amount").textContent = amtValue.toFixed(2);
+      document.getElementById("r-date").textContent = new Date().toLocaleDateString();
+    }
+  }
 
-    const confirmPinBtn = document.getElementById("confirmPinBtn");
-    const cancelPinBtn = document.getElementById("cancelPinBtn");
-    const transactionPinInput = document.getElementById("transactionPin");
-    confirmPinBtn.onclick = () => {
+  // ===== SEND MONEY =====
+  if (sendForm) {
+    sendForm.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const bank = document.getElementById("bank").value;
+      const account = document.getElementById("account").value.trim();
+      const recipient = document.getElementById("recipient").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const note = document.getElementById("note").value.trim();
+
+      if (!bank || !account || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
+      if (amount > totalBalance) return alert("Insufficient funds.");
+
+      // Wells Fargo special case
+      if (bank === "WEF" && account === "15623948807") {
+        sendBtn.disabled = true;
+        let dots = 0;
+        sendBtn.textContent = "Processing";
+        const loader = setInterval(() => {
+          dots = (dots + 1) % 4;
+          sendBtn.textContent = "Processing" + ".".repeat(dots);
+        }, 400);
+        setTimeout(() => {
+          clearInterval(loader);
+          sendForm.style.display = "none";
+          toggleTransferBtn.textContent = "Transfer Funds";
+          window.location.href = "error.html";
+        }, 4000);
+        return;
+      }
+
+      // Open PIN modal
+      pinModal.style.display = "flex";
+      transactionPinInput.value = "";
+      pinMessage.textContent = "";
+      attemptsLeft = maxAttempts;
+    });
+  }
+
+  // ===== PIN CONFIRM =====
+  confirmPinBtn.addEventListener("click", () => {
+    if (transactionPinInput.value !== demoUser.transferPin) {
+      attemptsLeft--;
+      pinMessage.textContent = attemptsLeft > 0 ? `Incorrect PIN. ${attemptsLeft} attempt(s) remaining.` : "Maximum attempts reached!";
+      if (attemptsLeft <= 0) setTimeout(() => pinModal.style.display = "none", 1000);
+      transactionPinInput.value = "";
+      return;
+    }
+
+    // Determine which form is active
     const activeSend = sendForm && sendForm.style.display === "block";
     const activePay = payBillForm && payBillForm.style.display === "block";
     const activeRequest = requestMoneyForm && requestMoneyForm.style.display === "block";
 
-    if (transactionPinInput.value !== demoUser.transferPin) {
-        pinMessage.textContent = "Incorrect PIN!";
-        return;
-    }
-
     if (activeSend) {
-        const bank = document.getElementById("bank").value;
-        const recipient = document.getElementById("recipient").value.trim();
-        const amount = parseFloat(document.getElementById("amount").value);
-        processTransaction("expense", `Transfer to ${recipient} (${bank})`, amount);
-        sendForm.reset();
-        sendForm.style.display = "none";
-        toggleTransferBtn.textContent = "Transfer Funds";
+      const bank = document.getElementById("bank").value;
+      const recipient = document.getElementById("recipient").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const note = document.getElementById("note").value.trim();
+      processTransaction("expense", `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`, amount);
+      sendForm.reset();
+      sendForm.style.display = "none";
+      toggleTransferBtn.textContent = "Transfer Funds";
     }
 
     if (activePay) {
-        const billText = document.getElementById("biller").value;
-        const billAmount = parseFloat(document.getElementById("bill-amount").value);
-        processTransaction("expense", billText, billAmount);
-        payBillForm.reset();
-        payBillForm.style.display = "none";
+      const billText = document.getElementById("biller").value;
+      const billAmount = parseFloat(document.getElementById("bill-amount").value);
+      processTransaction("expense", billText, billAmount);
+      payBillForm.reset();
+      payBillForm.style.display = "none";
     }
 
     if (activeRequest) {
-        const recipient = document.getElementById("request-recipient").value.trim();
-        const amount = parseFloat(document.getElementById("request-amount").value);
-        processTransaction("income", `Money Requested from ${recipient}`, amount, "pending"); // <-- pending
-        requestMoneyForm.reset();
-        requestMoneyForm.style.display = "none";
+      const recipient = document.getElementById("request-recipient").value.trim();
+      const amount = parseFloat(document.getElementById("request-amount").value);
+      processTransaction("income", `Money Requested from ${recipient}`, amount, "pending");
+      requestMoneyForm.reset();
+      requestMoneyForm.style.display = "none";
     }
 
     pinModal.style.display = "none";
     transactionPinInput.value = "";
     pinMessage.textContent = "";
-};
-
-     function processTransaction(type, text, amount, status = "completed") {
-  let amtValue = parseFloat(amount);
-  if (type === "expense") totalBalance -= amtValue;
-  if (type === "income") totalBalance += amtValue;
-
-  // Save transaction
-  savedTransactions.unshift({
-    type: type,
-    text: text,
-    amount: "$" + amtValue,
-    date: new Date().toISOString().split('T')[0],
-    status: status // store pending/completed
   });
-  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
-  localStorage.setItem("totalBalance", totalBalance);
 
-  // Update balance display
-  balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  cancelPinBtn.addEventListener("click", () => {
+    pinModal.style.display = "none";
+    transactionPinInput.value = "";
+    pinMessage.textContent = "";
+  });
 
-  // Add to transaction list
-  const li = document.createElement("li");
-  li.classList.add(type);
-  li.innerHTML = `<span>${text}</span><span>${type === "expense" ? "-$" : "$"}${amtValue.toLocaleString()}</span>`;
-  transactionsList.insertBefore(li, transactionsList.firstChild);
-
-  // Only show modal if completed
-  if (status === "completed" && successModal) {
-    successModal.style.display = "flex";
-    document.getElementById("r-id").textContent = Math.floor(Math.random() * 1000000);
-    document.getElementById("r-name").textContent = text;
-    document.getElementById("r-amount").textContent = amtValue.toFixed(2);
-    document.getElementById("r-date").textContent = new Date().toLocaleDateString();
+  // ===== TOGGLE TRANSFER FORM =====
+  if (toggleTransferBtn && sendForm) {
+    toggleTransferBtn.addEventListener("click", () => {
+      sendForm.style.display = sendForm.style.display === "block" ? "none" : "block";
+      toggleTransferBtn.textContent = sendForm.style.display === "block" ? "Hide Transfer Form" : "Transfer Funds";
+    });
   }
 }
-
-  // ===== SEND MONEY =====
-    if (sendForm) {
-      sendForm.addEventListener("submit", e => {
-        e.preventDefault();
-
-        const bank = document.getElementById("bank").value;
-        const account = document.getElementById("account").value.trim();
-        const recipient = document.getElementById("recipient").value.trim();
-        const amount = parseFloat(document.getElementById("amount").value);
-        const note = document.getElementById("note").value.trim();
-
-        if (!bank || !account || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
-        if (amount > totalBalance) return alert("Insufficient funds.");
-
-        // Wells Fargo special case
-        if (bank === "WEF" && account === "15623948807") {
-          sendBtn.disabled = true;
-          let dots = 0;
-          sendBtn.textContent = "Processing";
-          const loader = setInterval(() => {
-            dots = (dots + 1) % 4;
-            sendBtn.textContent = "Processing" + ".".repeat(dots);
-          }, 400);
-          setTimeout(() => { clearInterval(loader); sendForm.style.display = "none"; toggleTransferBtn.textContent = "Transfer Funds"; window.location.href = "error.html"; }, 4000);
-          return;
-        }
-
-        // Open PIN modal
-        pinModal.style.display = "flex";
-        transactionPinInput.value = "";
-        pinMessage.textContent = "";
-        let attemptsLeft = maxAttempts;
-
-          if (transactionPinInput.value !== demoUser.transferPin) {
-            attemptsLeft--;
-            pinMessage.textContent = attemptsLeft > 0 ? `Incorrect PIN. ${attemptsLeft} attempt(s) remaining.` : "Maximum attempts reached.";
-            if (attemptsLeft <= 0) setTimeout(() => pinModal.style.display = "none", 1000);
-            transactionPinInput.value = "";
-            return;
-          }
-
-          // Normal transaction with loader
-          pinModal.style.display = "none";
-          sendBtn.disabled = true;
-          let dots = 0;
-          sendBtn.textContent = "Processing";
-          const loader = setInterval(() => { dots = (dots + 1) % 4; sendBtn.textContent = "Processing" + ".".repeat(dots); }, 400);
-
-          setTimeout(() => {
-            clearInterval(loader);
-            processTransaction("expense", `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`, amount);
-            sendForm.reset();
-            sendBtn.disabled = false;
-            sendBtn.textContent = "Send Money";
-            sendForm.style.display = "none";
-            toggleTransferBtn.textContent = "Transfer Funds";
-          }, 4000);
-        };
-
-        cancelPinBtn.onclick = () => { pinModal.style.display = "none"; transactionPinInput.value = ""; pinMessage.textContent = ""; };
-      });
-  }
 
     // ===== BALANCE TOGGLE =====
     const balanceToggleBtn = document.getElementById("toggle-balance");
