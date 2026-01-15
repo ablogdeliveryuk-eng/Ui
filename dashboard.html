@@ -1,0 +1,205 @@
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "index.html"; // redirect to login if not logged in
+  }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Front Page | Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+<nav class="navbar">
+  <div class="profile" id="profile-btn">
+    <img src="avatar.jpg" alt="Avatar" class="avatar">
+    <span>Welcome, Charles</span>
+  </div>
+  
+  <button id="logout-btn">Logout</button>
+  </nav>
+
+  <!-- Dashboard -->
+  <main class="dashboard-container">
+
+<!-- Account Balance -->
+<div class="card balance-card">
+  <div class="balance-header">
+    <h3>Total Balance</h3>
+    <button id="toggle-balance" aria-label="Hide balance">👁</button>
+  </div>
+
+  <p class="balance sensitive">$1,500,450.50</p>
+
+  <div class="mini-cards">
+    <div class="mini-card">
+      <h4>Checking Account</h4>
+      <p class="sensitive">$7,200.00</p>
+      <small>For everyday spending</small>
+    </div>
+
+    <div class="mini-card">
+      <h4>Savings Account</h4>
+      <p class="sensitive">$500,250.50</p>
+      <small>For long-term savings</small>
+    </div>
+  </div>
+</div>
+    
+<div class="spending-trends-card card">
+  <h3>Monthly Spending Trends</h3>
+  <canvas id="spendingChart"></canvas>
+</div>
+    
+<div class="card quick-actions-card">
+  <h3>Quick Actions</h3>
+  <div class="quick-actions-buttons">
+    <button class="quick-btn" data-action="pay-bill">💡 Pay Bill</button>
+    <button class="quick-btn" data-action="send-money">💸 Send Money</button>
+    <button class="quick-btn" data-action="request-money">📥 Request Money</button>
+  </div>
+    </div>
+    
+    <!-- Pay Bill Form -->
+<div class="card pay-bill-card" style="display:none; margin-top:15px;">
+  <h3>Pay Bill</h3>
+  <form id="pay-bill-form">
+    <div class="form-group">
+      <label for="biller">Select Biller</label>
+      <select id="biller" required>
+        <option value="" disabled selected>Choose Biller</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water">Water</option>
+        <option value="Internet">Internet</option>
+        <option value="Cable TV">Cable TV</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="bill-amount">Amount ($)</label>
+      <input type="number" id="bill-amount" placeholder="Enter amount" required>
+    </div>
+
+    <div class="form-group">
+      <label for="bill-note">Note (Optional)</label>
+      <input type="text" id="bill-note" placeholder="Add a note">
+    </div>
+
+    <button type="submit">Pay Bill</button>
+  </form>
+</div>
+
+<!-- Request Money Form -->
+<div class="card request-money-card" style="display:none; margin-top:15px;">
+  <h3>Request Money</h3>
+  <form id="request-money-form">
+    <div class="form-group">
+      <label for="request-recipient">Recipient Name</label>
+      <input type="text" id="request-recipient" placeholder="Enter recipient name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="request-amount">Amount ($)</label>
+      <input type="number" id="request-amount" placeholder="Enter amount" required>
+    </div>
+
+    <div class="form-group">
+      <label for="request-note">Note (Optional)</label>
+      <input type="text" id="request-note" placeholder="Add a note">
+    </div>
+
+    <button type="submit">Request Money</button>
+  </form>
+  </div>
+
+    <!-- Recent Transactions -->
+ <div class="card transactions-card">
+  <h3>Recent Transactions</h3>
+  <ul>
+    <li class="expense"><span>Amazon — Shopping</span><span>-$1200</span></li>
+  </ul>
+</div>
+
+   <!-- Send Money / Transfer Funds -->
+<div class="card send-money-card">
+  <h3>Transfer Funds</h3>
+  <!-- Toggle button -->
+  <button type="button" id="toggle-transfer-btn" class="button secondary">
+  Transfer Funds
+  </button>
+
+  <!-- Hidden form -->
+  <form id="send-money-form" style="display:none; margin-top:15px;">
+    <div class="form-group">
+      <label for="bank">Select Bank</label>
+      <select id="bank" required>
+        <option value="" disabled selected>Choose Bank</option>
+        <option value="BA">Bank of America</option>
+        <option value="PNC">PNC Bank</option>
+        <option value="CAP">Capital One</option>
+        <option value="WEF">Wells Fargo</option>
+        <option value="Citi">Citibank</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="account">Account Number</label>
+      <input type="text" id="account" placeholder="Enter account number" required>
+    </div>
+
+    <div class="form-group">
+      <label for="recipient">Recipient Name</label>
+      <input type="text" id="recipient" placeholder="Enter recipient name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Amount ($)</label>
+      <input type="number" id="amount" placeholder="Enter amount" required>
+    </div>
+
+    <div class="form-group">
+      <label for="note">Note (Optional)</label>
+      <input type="text" id="note" placeholder="Add a note">
+    </div>
+
+    <button type="submit" id="send-btn">Send Money</button>
+  </form>
+</div>
+
+  </main>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script src="script.js"></script>
+      
+<footer class="login-footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a> |
+    <a href="security.html">Security</a> |
+    <a href="terms.html">Terms & Conditions</a> |
+    <a href="help.html">Help</a>
+  </div>
+  <small>&copy; 2026 Front Page, All rights reserved.</small>
+</footer>
+  
+<!-- Profile Panel -->
+<div id="profile-panel">
+  <div class="profile-header">
+    <img src="avatar.jpg" alt="Avatar" class="avatar-large">
+    <h3>Charles Williams</h3>
+    <p>Charlesweahh@gmail.com</p>
+  </div>
+  <div class="profile-actions">
+    <button id="edit-profile">Edit Profile</button>
+    <button id="account-settings">Account Settings</button>
+    <button id="close-profile">Close</button>
+  </div>
+</div>
+  
+</body>
+</html>  
