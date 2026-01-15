@@ -136,12 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "index.html";
     });
 
-     // ===== PIN MODAL & SEND MONEY =====
-     const balanceEl = document.querySelector(".balance");
-
-     let totalBalance = parseFloat(localStorage.getItem("totalBalance")) || 
-     parseFloat(balanceEl.textContent.replace(/[$,]/g, "")) || 0;
-
   // ===== PIN MODAL =====
   const pinModal = document.createElement("div");
   pinModal.id = "pinModal";
