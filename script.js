@@ -251,15 +251,15 @@
       const txObj = {
       id: Math.floor(Math.random() * 1000000),
       ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
-      type: "income", // or "expense" depending on logic
-      text: `Request from ${pendingTransaction.details.recipient}`,
-      amount: pendingTransaction.details.amount,
+      type: type,      // now uses actual type: "income" or "expense"
+      text: text,
+      amount: amtValue,
       date: new Date().toISOString(),
-      status: "pending",
-      recipient: pendingTransaction.details.recipient || "",
-      account: pendingTransaction.details.account || "",
-      bank: pendingTransaction.details.bank || "",
-      note: pendingTransaction.details.note || ""
+      status: status,
+      recipient: pendingTransaction?.details?.recipient || "",
+      account: pendingTransaction?.details?.account || "",
+      bank: pendingTransaction?.details?.bank || "",
+      note: pendingTransaction?.details?.note || ""
     };
       window.lastTransactionDetails = txObj;
       
