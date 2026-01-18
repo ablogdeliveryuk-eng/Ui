@@ -491,28 +491,37 @@
               const { billText, billAmount } = details;
               processTransaction("expense", billText, billAmount, "completed");
               if (payBillForm) payBillForm.reset();
-            } else if (action === "request") {
+              } else if (action === "request") {
               const { recipient, amount } = details;
 
+              // Corrected request transaction object
               const txObj = {
               id: Math.floor(Math.random() * 1000000),
               ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
-              type: type,        // "income" or "expense"
-              text: text,        // display text
-              amount: amtValue,  // numeric
+              type: "income",                    // explicitly define type as income
+              text: `Request from ${recipient}`, // clear text for display
+              amount: amount,                     // numeric amount
               date: new Date().toISOString(),
-              status: status,
-              // Optional extra fields for PDF
-              recipient: pendingTransaction?.details?.recipient || "",
+              status: "pending",
+              recipient: recipient,
               account: pendingTransaction?.details?.account || "",
               bank: pendingTransaction?.details?.bank || "",
               note: pendingTransaction?.details?.note || ""
-            };
-              
-              savedTransactions.unshift(txObj);
-              saveTransactionsAndBalance();
-              if (transactionsList) renderTransactions();
-              if (requestMoneyForm) requestMoneyForm.reset();
+             };
+
+             // Save transaction
+             savedTransactions.unshift(txObj);
+             saveTransactionsAndBalance();
+
+             // Render updated transaction list
+             if (transactionsList) renderTransactions();
+
+             // Reset request form
+             if (requestMoneyForm) requestMoneyForm.reset();
+
+             // Store globally for receipt download
+             window.lastTransactionDetails = txObj;
+             window.lastTransactionAction = action;
             }
 
             // ===== SHOW SUCCESS MODAL =====
