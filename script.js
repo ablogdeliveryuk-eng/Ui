@@ -267,46 +267,46 @@
       return txObj;
     }
 
-    function showTransactionReceipt(tx) {
-      const successModal = $("success-modal");
-      if (!successModal || !tx) return;
+  function showTransactionReceipt(tx) {
+  const successModal = $("success-modal");
+  if (!successModal || !tx) return;
 
-      // Show modal
-      successModal.style.display = "flex";
+  // Show modal with proper styling
+  successModal.style.display = "flex";
+  successModal.style.position = "fixed";
+  successModal.style.top = "50%";
+  successModal.style.left = "50%";
+  successModal.style.transform = "translate(-50%, -50%)";
+  successModal.style.zIndex = 2000;
 
-      // Fill modal with transaction info
-      const rid = $("r-id"); if (rid) rid.textContent = tx.id || Math.floor(Math.random() * 1000000);
-      const rref = $("r-ref"); if (rref) rref.textContent = tx.ref || "REF" + Math.floor(100000000 + Math.random() * 900000000);
-      const now = new Date(tx.date ? tx.date : Date.now());
-      const rdate = $("r-date"); if (rdate) rdate.textContent = now.toLocaleDateString();
-      const rtime = $("r-time"); if (rtime) rtime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+  // Fill modal with transaction info
+  const rid = $("r-id"); if (rid) rid.textContent = tx.id || Math.floor(Math.random() * 1000000);
+  const rref = $("r-ref"); if (rref) rref.textContent = tx.ref || "REF" + Math.floor(100000000 + Math.random() * 900000000);
+  const now = new Date(tx.date ? tx.date : Date.now());
+  const rdate = $("r-date"); if (rdate) rdate.textContent = now.toLocaleDateString();
+  const rtime = $("r-time"); if (rtime) rtime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
 
-      // Fill transaction details
-      const ramount = $("r-amount"); if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
-      const rfee = $("r-fee"); if (rfee) rfee.textContent = "0.00";
+  const ramount = $("r-amount"); if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
+  const rfee = $("r-fee"); if (rfee) rfee.textContent = "0.00";
 
-      const rrecipient = $("r-recipient");
-      const rname = $("r-name");
+  const rrecipient = $("r-recipient");
+  const rname = $("r-name");
+  if (tx.account || tx.bank) {
+    if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+    if (rname) rname.textContent = tx.recipient || "[Name]";
+  } else {
+    if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
+    if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
+  }
 
-      if (tx.account || tx.bank) {
-        if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
-        if (rname) rname.textContent = tx.recipient || "[Name]";
-      } else if (tx.type === "pay") {
-        if (rrecipient) rrecipient.textContent = tx.text || "[Biller]";
-        if (rname) rname.textContent = tx.text || "[Biller]";
-      } else {
-        if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
-        if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
-      }
+  const modalHeading = successModal.querySelector("h2");
+  if (modalHeading) {
+    modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
+  }
 
-      const modalHeading = successModal.querySelector("h2");
-      if (modalHeading) {
-        modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
-      }
-
-      // Store transaction globally for download button
-      window.lastTransactionDetails = tx;
-    }
+  // Save globally for download
+  window.lastTransactionDetails = tx;
+  }
 
     // ===== SEND MONEY =====
     if (sendForm) {
