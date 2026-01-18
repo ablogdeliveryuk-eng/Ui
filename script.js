@@ -139,13 +139,18 @@
         viewBtn.textContent = "View Receipt";
         viewBtn.style.marginLeft = "10px";
         viewBtn.classList.add("view-receipt-btn");
-        viewBtn.addEventListener("click", () => showTransactionReceipt(tx));
-        li.appendChild(viewBtn);
 
-        transactionsList.insertBefore(li, transactionsList.firstChild);
+       // ✅ Replace this:
+       viewBtn.addEventListener("click", () => {
+       console.log("Transaction clicked:", tx); // <- debug line
+       showTransactionReceipt(tx);              // <- call your modal
       });
-    }
-    renderTransactions();
+
+       li.appendChild(viewBtn);
+       transactionsList.insertBefore(li, transactionsList.firstChild);
+      });
+     }
+     renderTransactions();
 
     // ===== CHART =====
     try {
