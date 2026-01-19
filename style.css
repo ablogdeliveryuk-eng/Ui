@@ -640,6 +640,7 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   cursor: pointer;
 }
 
+
 #success-modal #close-receipt {
   background-color: #ccc;
   color: #333;
@@ -660,3 +661,8 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   background-color: var(--color-primary-strong);
   transform: translateY(-1px);
 }
+
+#download-receipt {
+  display: block;
+  margin: 15px auto 0 auto;
+}  
