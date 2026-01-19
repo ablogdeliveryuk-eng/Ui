@@ -115,7 +115,7 @@
     // ===== DASHBOARD ELEMENTS =====
     const sendForm = $("send-money-form");
     const toggleTransferBtn = $("toggle-transfer-btn");
-    const transactionsList = document.querySelector(".transactions-card ul");
+    const transactionsList = document.getElementById("transactions-list");
     const payBillForm = $("pay-bill-form");
     const requestMoneyForm = $("request-money-form");
     const sendBtn = $("send-btn");
