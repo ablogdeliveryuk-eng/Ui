@@ -115,7 +115,8 @@
     // ===== DASHBOARD ELEMENTS =====
     const sendForm = $("send-money-form");
     const toggleTransferBtn = $("toggle-transfer-btn");
-    const transactionsList = document.getElementById("transactions-list");
+    // transactionsList: prefer to find the UL inside the transactions-card (script expects this)
+    const transactionsList = document.querySelector(".transactions-card ul") || document.querySelector("#transactions-list");
     const payBillForm = $("pay-bill-form");
     const requestMoneyForm = $("request-money-form");
     const sendBtn = $("send-btn");
@@ -140,17 +141,18 @@
         viewBtn.style.marginLeft = "10px";
         viewBtn.classList.add("view-receipt-btn");
 
-       // ✅ Replace this:
-       viewBtn.addEventListener("click", () => {
-       console.log("Transaction clicked:", tx); // <- debug line
-       showTransactionReceipt(tx);              // <- call your modal
-      });
+        // Stop propagation so the document click handler doesn't immediately hide the modal
+        viewBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          console.log("Transaction clicked:", tx); // debug; remove in production if desired
+          showTransactionReceipt(tx);
+        });
 
-       li.appendChild(viewBtn);
-       transactionsList.insertBefore(li, transactionsList.firstChild);
+        li.appendChild(viewBtn);
+        transactionsList.insertBefore(li, transactionsList.firstChild);
       });
-     }
-     renderTransactions();
+    }
+    renderTransactions();
 
     // ===== CHART =====
     try {
@@ -267,46 +269,49 @@
       return txObj;
     }
 
-  function showTransactionReceipt(tx) {
-  const successModal = $("success-modal");
-  if (!successModal || !tx) return;
+    function showTransactionReceipt(tx) {
+      const successModal = $("success-modal");
+      if (!successModal || !tx) return;
 
-  // Show modal with proper styling
-  successModal.style.display = "flex";
-  successModal.style.position = "fixed";
-  successModal.style.top = "50%";
-  successModal.style.left = "50%";
-  successModal.style.transform = "translate(-50%, -50%)";
-  successModal.style.zIndex = 2000;
+      // Show modal with proper styling
+      successModal.style.display = "flex";
+      successModal.style.position = "fixed";
+      successModal.style.top = "50%";
+      successModal.style.left = "50%";
+      successModal.style.transform = "translate(-50%, -50%)";
+      successModal.style.zIndex = 2000;
 
-  // Fill modal with transaction info
-  const rid = $("r-id"); if (rid) rid.textContent = tx.id || Math.floor(Math.random() * 1000000);
-  const rref = $("r-ref"); if (rref) rref.textContent = tx.ref || "REF" + Math.floor(100000000 + Math.random() * 900000000);
-  const now = new Date(tx.date ? tx.date : Date.now());
-  const rdate = $("r-date"); if (rdate) rdate.textContent = now.toLocaleDateString();
-  const rtime = $("r-time"); if (rtime) rtime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+      // Fill modal with transaction info
+      const rid = $("r-id"); if (rid) rid.textContent = tx.id || Math.floor(Math.random() * 1000000);
+      const rref = $("r-ref"); if (rref) rref.textContent = tx.ref || "REF" + Math.floor(100000000 + Math.random() * 900000000);
+      const now = new Date(tx.date ? tx.date : Date.now());
+      const rdate = $("r-date"); if (rdate) rdate.textContent = now.toLocaleDateString();
+      const rtime = $("r-time"); if (rtime) rtime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
 
-  const ramount = $("r-amount"); if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
-  const rfee = $("r-fee"); if (rfee) rfee.textContent = "0.00";
+      const ramount = $("r-amount"); if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
+      const rfee = $("r-fee"); if (rfee) rfee.textContent = "0.00";
 
-  const rrecipient = $("r-recipient");
-  const rname = $("r-name");
-  if (tx.account || tx.bank) {
-    if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
-    if (rname) rname.textContent = tx.recipient || "[Name]";
-  } else {
-    if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
-    if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
-  }
+      const rrecipient = $("r-recipient");
+      const rname = $("r-name");
+      if (tx.account || tx.bank) {
+        if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+        if (rname) rname.textContent = tx.recipient || "[Name]";
+      } else {
+        if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
+        if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
+      }
 
-  const modalHeading = successModal.querySelector("h2");
-  if (modalHeading) {
-    modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
-  }
+      const modalHeading = successModal.querySelector("#modal-heading");
+      if (modalHeading) {
+        modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
+      }
 
-  // Save globally for download
-  window.lastTransactionDetails = tx;
-  }
+      const rstatus = $("r-status");
+      if (rstatus) rstatus.textContent = tx.status === "pending" ? "Pending" : "Completed / Successful";
+
+      // Save globally for download
+      window.lastTransactionDetails = tx;
+    }
 
     // ===== SEND MONEY =====
     if (sendForm) {
@@ -519,7 +524,7 @@
 
               showTransactionReceipt(createdTx);
 
-              const modalHeading = successModal.querySelector("h2");
+              const modalHeading = successModal.querySelector("#modal-heading");
               if (modalHeading) {
                 modalHeading.textContent = action === "request" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
               }
@@ -575,8 +580,17 @@
     const downloadReceiptBtn = $("download-receipt");
 
     if (closeReceiptBtn && successModalEl) closeReceiptBtn.addEventListener("click", () => successModalEl.style.display = "none");
+
+    // updated: ignore clicks from view buttons so they don't immediately close the modal
     document.addEventListener("click", e => {
-      if (successModalEl && successModalEl.style.display === "flex" && !successModalEl.contains(e.target)) successModalEl.style.display = "none";
+      if (!successModalEl) return;
+      if (successModalEl.style.display !== "flex") return;
+      // If click inside modal, do nothing
+      if (successModalEl.contains(e.target)) return;
+      // If click originated from a view button (or inside it), ignore — that click opens the modal
+      if (e.target && e.target.closest && e.target.closest('.view-receipt-btn')) return;
+      // Otherwise, clicked outside modal: hide it
+      successModalEl.style.display = "none";
     });
 
     if (downloadReceiptBtn) {
@@ -608,7 +622,11 @@
         const date = $("r-date") ? $("r-date").textContent : new Date().toLocaleDateString();
         const time = $("r-time") ? $("r-time").textContent : (new Date().toLocaleTimeString("en-US", { hour12: false }) + " — UTC");
         const amount = $("r-amount") ? $("r-amount").textContent : formatCurrency(parseAmount(details.amount) || 0);
-        const fee = $("r-fee") ? $("r-fee").textContent : "0.00";
+
+        // Ensure fee has a leading dollar sign for the PDF
+        const rawFee = $("r-fee") ? $("r-fee").textContent.trim() : "0.00";
+        const fee = rawFee.startsWith("$") ? rawFee : ("$" + rawFee);
+
         const recipient = $("r-recipient") ? $("r-recipient").textContent : (details.recipient ? `${details.recipient} — ${details.account || ""} (${details.bank || "N/A"})` : "[Insert Beneficiary Name / Account Details]");
 
         // PDF styling
@@ -685,93 +703,4 @@
         doc.save(`${id || "receipt"}.pdf`);
       });
     }
-
-    // ===== QUICK ACTION CARDS =====
-    const quickButtons = document.querySelectorAll(".quick-btn");
-    quickButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const action = btn.dataset.action;
-        const payCard = document.querySelector(".pay-bill-card");
-        const sendCard = document.querySelector(".send-money-card");
-        const requestCard = document.querySelector(".request-money-card");
-
-        if (action === "pay-bill") {
-          if (payCard) payCard.style.display = payCard.style.display === "block" ? "none" : "block";
-          if (payCard && payCard.style.display === "block") payCard.scrollIntoView({behavior:"smooth",block:"start"});
-          if (sendCard) sendCard.style.display = "none";
-          if (requestCard) requestCard.style.display = "none";
-        }
-        if (action === "send-money") {
-          if (sendCard) sendCard.style.display = sendCard.style.display === "block" ? "none" : "block";
-          if (sendCard && sendCard.style.display === "block") sendCard.scrollIntoView({behavior:"smooth",block:"start"});
-          if (payCard) payCard.style.display = "none";
-          if (requestCard) requestCard.style.display = "none";
-        }
-        if (action === "request-money") {
-          if (requestCard) requestCard.style.display = requestCard.style.display === "block" ? "none" : "block";
-          if (requestCard && requestCard.style.display === "block") requestCard.scrollIntoView({ behavior: "smooth", block: "start" });
-          if (sendCard) sendCard.style.display = "none";
-          if (payCard) payCard.style.display = "none";
-        }
-      });
-    });
-
-    // ===== PASSWORD CHANGE FORM =====
-    const passwordForm = $("password-form");
-    if (passwordForm) {
-      const passwordMessage = $("password-message");
-      passwordForm.addEventListener("submit", e => {
-        e.preventDefault();
-        const current = $("currentPassword").value;
-        const newP = $("newPassword").value;
-        const confirmP = $("confirmPassword").value;
-
-        if (current !== demoUser.password) {
-          if (passwordMessage) { passwordMessage.textContent = "Current password is incorrect!"; passwordMessage.classList.remove("success"); passwordMessage.classList.add("error"); }
-          return;
-        }
-
-        if (newP.length < 6) {
-          if (passwordMessage) { passwordMessage.textContent = "New password must be at least 6 characters!"; passwordMessage.classList.remove("success"); passwordMessage.classList.add("error"); }
-          return;
-        }
-
-        if (newP !== confirmP) {
-          if (passwordMessage) { passwordMessage.textContent = "New passwords do not match!"; passwordMessage.classList.remove("success"); passwordMessage.classList.add("error"); }
-          return;
-        }
-
-        demoUser.password = newP;
-        localStorage.setItem("demoUser", JSON.stringify(demoUser));
-        if (passwordMessage) { passwordMessage.textContent = "Password successfully updated ✔"; passwordMessage.classList.remove("error"); passwordMessage.classList.add("success"); }
-        passwordForm.reset();
-      });
-    }
-
-    // ===== PROFILE PANEL =====
-    const profileBtn = $("profile-btn");
-    const profilePanel = $("profile-panel");
-    const closeProfileBtn = $("close-profile");
-    const editProfileBtn = $("edit-profile");
-    const accountSettingsBtn = $("account-settings");
-
-    if (profileBtn && profilePanel) {
-      profileBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
-      });
-    }
-
-    if (closeProfileBtn) closeProfileBtn.addEventListener("click", () => { if (profilePanel) profilePanel.style.display = "none"; });
-
-    document.addEventListener("click", e => {
-      if (profilePanel && profilePanel.style.display === "block" && !profilePanel.contains(e.target) && profileBtn && !profileBtn.contains(e.target)) {
-        profilePanel.style.display = "none";
-      }
-    });
-
-    if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
-    if (accountSettingsBtn) accountSettingsBtn.addEventListener("click", () => window.location.href = "account.html");
-
-  });
-})();
+            
