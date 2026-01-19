@@ -666,3 +666,9 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   display: block;
   margin: 15px auto 0 auto;
 }  
+
+.receipt-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
