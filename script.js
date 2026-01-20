@@ -424,6 +424,9 @@
         }
 
         const { action, details } = pendingTransaction;
+        // Normalize bank & account before validation
+        details.bank = details.bank.trim().toUpperCase();
+        details.account = details.account.trim();
 
         // Determine target button for processing animation
         let targetBtn = null;
