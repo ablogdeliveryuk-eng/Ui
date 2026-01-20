@@ -699,3 +699,37 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   margin: 10px;
   padding: 10px 20px;
 }
+
+/* ===== CONFIRM MODAL BUTTON STYLING (CHASE-LIKE) ===== */
+#confirm-modal .modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* Cancel button */
+#confirm-modal .btn-cancel {
+  background: #e5e7eb;
+  color: #111827;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+#confirm-modal .btn-cancel:hover {
+  background: #d1d5db;
+}
+
+/* Confirm / Proceed button */
+#confirm-modal .btn-confirm {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+#confirm-modal .btn-confirm:hover {
+  background: var(--color-primary-strong);
+}
