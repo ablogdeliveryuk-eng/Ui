@@ -317,30 +317,33 @@ const confirmRecipient = document.getElementById("confirm-recipient");
 const cancelConfirm = document.getElementById("cancel-confirm");
 const proceedConfirm = document.getElementById("proceed-confirm");
 
-// Intercept form submit
-sendForm.addEventListener("submit", function(e) {
-  e.preventDefault(); // Stop immediate submission
+if (sendForm && confirmModal && confirmAccount && confirmRecipient && cancelConfirm && proceedConfirm) {
+  // Intercept form submit
+  sendForm.addEventListener("submit", function(e) {
+    e.preventDefault(); // Stop immediate submission
 
-  // Fill the modal with entered info
-  confirmAccount.textContent = document.getElementById("account").value;
-  confirmRecipient.textContent = document.getElementById("recipient").value;
+    // Fill the modal with entered info
+    confirmAccount.textContent = document.getElementById("account").value;
+    confirmRecipient.textContent = document.getElementById("recipient").value;
 
-  // Show modal
-  confirmModal.style.display = "block";
-});
+    // Show modal
+    confirmModal.style.display = "block";
+  });
 
-// Cancel button
-cancelConfirm.addEventListener("click", function() {
-  confirmModal.style.display = "none";
-});
+  // Cancel button
+  cancelConfirm.addEventListener("click", function() {
+    confirmModal.style.display = "none";
+  });
 
-// Proceed button
-proceedConfirm.addEventListener("click", function() {
-  confirmModal.style.display = "none";
+  // Proceed button
+  proceedConfirm.addEventListener("click", function() {
+    confirmModal.style.display = "none";
 
-  // Now actually submit the form or proceed to pin entry
-  processTransaction(); // <-- your function to handle the transfer
-});
+    // Now actually submit the form or proceed to pin entry
+    // We need to call your existing send-money flow here, e.g. trigger submit
+    sendForm.dispatchEvent(new Event("submit", { cancelable: true }));
+  });
+}
 
     // ===== SEND MONEY =====
     if (sendForm) {
