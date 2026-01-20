@@ -243,16 +243,19 @@
     // Centralized transaction creation and saving
     // txProps: { type: "income"|"expense", text, amount, recipient, account, bank, note, status }
     function processTransaction(txProps) {
-      const amtValue = Number(txProps.amount) || 0;
-      if (txProps.type === "expense") totalBalance -= amtValue;
-      if (txProps.type === "income" && txProps.status !== "pending") totalBalance += amtValue;
+      // normalize amount to number
+      const amtValue = (typeof txProps.amount === "number") ? txProps.amount : parseAmount(txProps.amount);
+      const numericAmt = isNaN(amtValue) ? 0 : amtValue;
+
+      if (txProps.type === "expense") totalBalance -= numericAmt;
+      if (txProps.type === "income" && txProps.status !== "pending") totalBalance += numericAmt;
 
       const txObj = {
         id: Math.floor(Math.random() * 1000000),
         ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
         type: txProps.type || "income",
         text: txProps.text || "",
-        amount: (typeof txProps.amount === "number") ? txProps.amount : txProps.amount || txProps.amount,
+        amount: numericAmt,
         date: new Date().toISOString(),
         status: txProps.status || "completed",
         recipient: txProps.recipient || "",
@@ -309,8 +312,7 @@
   window.lastTransactionDetails = tx;
   }
 
-    // Get elements
-const sendForm = $("send-money-form");
+    // Get elements (DO NOT redeclare sendForm here — it's already declared above)
 const confirmModal = $("confirm-modal");
 const confirmAccount = $("confirm-account");
 const confirmRecipient = $("confirm-recipient");
@@ -436,9 +438,10 @@ if (sendForm && confirmModal && confirmAccount && confirmRecipient && cancelConf
         }
 
         const { action, details } = pendingTransaction;
-        // Normalize bank & account before validation
-        details.bank = details.bank.trim().toUpperCase();
-        details.account = details.account.trim();
+
+        // Normalize bank & account before validation — do it safely (handle undefined)
+        details.bank = (details.bank || "").trim().toUpperCase();
+        details.account = (details.account || "").trim();
 
         // Determine target button for processing animation
         let targetBtn = null;
