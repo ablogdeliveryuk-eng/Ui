@@ -310,45 +310,18 @@
   }
 
     // Get elements
-const sendForm = document.getElementById("send-money-form");
-const confirmModal = document.getElementById("confirm-modal");
-const confirmAccount = document.getElementById("confirm-account");
-const confirmRecipient = document.getElementById("confirm-recipient");
-const cancelConfirm = document.getElementById("cancel-confirm");
-const proceedConfirm = document.getElementById("proceed-confirm");
+const sendForm = $("send-money-form");
+const confirmModal = $("confirm-modal");
+const confirmAccount = $("confirm-account");
+const confirmRecipient = $("confirm-recipient");
+const cancelConfirm = $("cancel-confirm");
+const proceedConfirm = $("proceed-confirm");
 
 if (sendForm && confirmModal && confirmAccount && confirmRecipient && cancelConfirm && proceedConfirm) {
-  // Intercept form submit
-  sendForm.addEventListener("submit", function(e) {
-    e.preventDefault(); // Stop immediate submission
 
-    // Fill the modal with entered info
-    confirmAccount.textContent = document.getElementById("account").value;
-    confirmRecipient.textContent = document.getElementById("recipient").value;
-
-    // Show modal
-    confirmModal.style.display = "block";
-  });
-
-  // Cancel button
-  cancelConfirm.addEventListener("click", function() {
-    confirmModal.style.display = "none";
-  });
-
-  // Proceed button
-  proceedConfirm.addEventListener("click", function() {
-    confirmModal.style.display = "none";
-
-    // Now actually submit the form or proceed to pin entry
-    // We need to call your existing send-money flow here, e.g. trigger submit
-    sendForm.dispatchEvent(new Event("submit", { cancelable: true }));
-  });
-}
-
-    // ===== SEND MONEY =====
-    if (sendForm && confirmModal && confirmAccount && confirmRecipient && proceedConfirm && cancelConfirm) {
-    sendForm.addEventListener("submit", e => {
-    e.preventDefault(); // stop default submit
+  // ===== SEND MONEY SUBMIT =====
+  sendForm.addEventListener("submit", e => {
+    e.preventDefault(); // Stop default submission
 
     const bank = $("bank").value.trim();
     const account = $("account").value.trim();
@@ -357,7 +330,7 @@ if (sendForm && confirmModal && confirmAccount && confirmRecipient && cancelConf
 
     if (!bank || !account || !recipient || isNaN(amount) || amount <= 0) {
       return alert("Fill all fields correctly.");
-  }
+    }
 
     // Store pending transaction
     pendingTransaction = {
@@ -371,23 +344,26 @@ if (sendForm && confirmModal && confirmAccount && confirmRecipient && cancelConf
     confirmModal.style.display = "block";
   });
 
+  // ===== CANCEL CONFIRM =====
   cancelConfirm.addEventListener("click", () => {
     confirmModal.style.display = "none";
     pendingTransaction = null;
   });
 
+  // ===== PROCEED CONFIRM =====
   proceedConfirm.addEventListener("click", () => {
     confirmModal.style.display = "none";
+
     // Open PIN modal to continue transaction
-    if (pendingTransaction) {
-      if (pinModal) pinModal.style.display = "flex";
+    if (pendingTransaction && pinModal) {
+      pinModal.style.display = "flex";
       transactionPinInput.value = "";
       pinMessage.textContent = "";
       attemptsLeft = maxAttempts;
     }
   });
- }
-
+}
+    
     // ===== PAY BILL =====
     if (payBillForm) {
       payBillForm.addEventListener("submit", e => {
