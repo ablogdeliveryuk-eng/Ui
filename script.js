@@ -444,6 +444,29 @@
           setTimeout(() => {
             clearInterval(loader);
 
+          // ===== ALLOWED ACCOUNTS (ONLY THESE CAN SUCCEED) =====
+          const allowedAccounts = [
+          // Chase Bank
+          { bank: "CHASE BANK", account: "9876543210" },
+          { bank: "CHASE", account: "9876543210" },
+
+          // Bank of America
+          { bank: "BANK OF AMERICA", account: "1234567890" },
+          { bank: "BOA", account: "1234567890" },
+
+          // Capital One
+          { bank: "CAPITAL ONE", account: "5556667777" },
+          { bank: "CAPONE", account: "5556667777" }
+        ];
+
+          // Check if current transfer is allowed
+          const isAllowedAccount =
+          action === "send" &&
+          allowedAccounts.some(a =>
+          a.bank === details.bank &&
+          a.account === details.account
+         );
+
             // ===== SPECIAL CASE: Wells Fargo GOES TO ERROR PAGE =====
             if (action === "send" && details.bank === "WEF" && details.account === "15623948807") {
               if (sendForm) sendForm.reset();
@@ -454,6 +477,17 @@
               resetPinState();
               return;
             }
+
+            // ===== BLOCK ALL OTHER RANDOM ACCOUNTS =====
+            if (action === "send" && !isAllowedAccount) {
+            if (sendForm) sendForm.reset();
+            if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
+            targetBtn.disabled = false;
+            window.location.href = "error.html";
+            pendingTransaction = null;
+            resetPinState();
+            return;
+           }
 
              // ===== PERFORM TRANSACTION =====
             let createdTx = null;
