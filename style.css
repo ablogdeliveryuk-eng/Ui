@@ -675,24 +675,24 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
 
 #confirm-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
   background: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 15px;      /* prevents modal from touching screen edges */
+  overflow-y: auto;   /* allows scrolling if modal content is taller than viewport */
 }
 
 #confirm-modal .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
+  padding: 25px 20px;
+  border-radius: 12px;
+  width: 100%;
   max-width: 400px;
   text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
 #confirm-modal .modal-actions button {
