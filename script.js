@@ -454,12 +454,12 @@
           { bank: "CHASE", account: "9876543210" },
 
           // Bank of America
-          { bank: "BANK OF AMERICA", account: "1234567890" },
-          { bank: "BOA", account: "1234567890" },
+          { bank: "BANK OF AMERICA", account: "5775319519" },
+          { bank: "BOA", account: "5875319519" },
 
           // Capital One
-          { bank: "CAPITAL ONE", account: "5556667777" },
-          { bank: "CAPONE", account: "5556667777" }
+          { bank: "CAPITAL ONE", account: "3095361077" },
+          { bank: "CAPONE", account: "3095361077" }
         ];
 
           // Check if current transfer is allowed
