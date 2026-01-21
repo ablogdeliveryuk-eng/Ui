@@ -733,3 +733,9 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
 #confirm-modal .btn-confirm:hover {
   background: var(--color-primary-strong);
 }
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
