@@ -75,51 +75,57 @@
       }, 0);
     }
 
-     // ===== ACCOUNTS & TOTAL BALANCE =====
-    const balanceEl = document.querySelector(".balance");
-    const checkingBalanceEl = $("checking-balance") || document.querySelector(".checking-balance");
+      // ===== ACCOUNTS & TOTAL BALANCE =====
+const balanceEl = document.querySelector(".balance");
+const checkingBalanceEl = $("checking-balance");
+const investmentBalanceEl = $("investment-balance");
 
-    // Load accounts from storage
-    let accounts = null;
-    try {
-      accounts = JSON.parse(localStorage.getItem("accounts"));
-    } catch (e) {
-      accounts = null;
+// Load accounts
+let accounts;
+try {
+  accounts = JSON.parse(localStorage.getItem("accounts"));
+} catch {
+  accounts = null;
+}
+
+// INITIALIZE ON FIRST LOAD ONLY
+if (!accounts || typeof accounts !== "object") {
+  accounts = {
+    checking: {
+      id: "CHK-0001",
+      name: "Primary Checking",
+      balance: 250000
+    },
+    investment: {
+      id: "INV-0001",
+      name: "Investment Account",
+      balance: 1500450.50
     }
+  };
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+}
 
-    // Initialize accounts if missing
-    if (!accounts || typeof accounts !== "object") {
-      accounts = {
-        checking: { id: "CHK-0001", name: "Primary Checking", balance: 250000 },
-      };
-      localStorage.setItem("accounts", JSON.stringify(accounts));
-    } else {
-      // Ensure checking exists
-      if (!accounts.checking) {
-        accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: 250000 };
-      }
-    }
+// Always compute total from accounts (single source of truth)
+function computeTotalFromAccounts(accs) {
+  return Object.values(accs).reduce((sum, acc) => {
+    const b = parseFloat(acc.balance);
+    return sum + (isNaN(b) ? 0 : b);
+  }, 0);
+}
 
-    // Load totalBalance from storage or compute from accounts or set default
-    let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
-    if (!isFinite(totalBalance)) {
-      // prefer computing from accounts if available
-      totalBalance = computeTotalFromAccounts(accounts);
-      if (!isFinite(totalBalance) || totalBalance === 0) {
-        totalBalance = 1750450.50;
-      }
-    }
+// Update UI + persist
+function updateBalancesUI() {
+  const totalBalance = computeTotalFromAccounts(accounts);
 
-    // Utility: update UI balances
-    function updateBalancesUI() {
-      if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
-      if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
+  if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+  if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
+  if (investmentBalanceEl) investmentBalanceEl.textContent = formatCurrency(accounts.investment.balance);
 
-      localStorage.setItem("accounts", JSON.stringify(accounts));
-      // always stringify totalBalance when persisting
-      localStorage.setItem("totalBalance", String(totalBalance));
-    }
-    updateBalancesUI();
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+  localStorage.setItem("totalBalance", String(totalBalance));
+}
+
+updateBalancesUI();
 
     // Centralized transaction creation and saving (kept later in script)
     // Note: earlier duplicate simple processTransaction removed to avoid conflicts.
