@@ -66,61 +66,63 @@
       }, 0);
     }
 
+    // Helper: compute total across accounts (single source of truth)
+    function computeTotalFromAccounts(accts) {
+      if (!accts || typeof accts !== "object") return 0;
+      return Object.values(accts).reduce((sum, a) => {
+        const b = a && a.balance ? parseFloat(a.balance) : 0;
+        return sum + (isNaN(b) ? 0 : b);
+      }, 0);
+    }
+
      // ===== ACCOUNTS & TOTAL BALANCE =====
-const balanceEl = document.querySelector(".balance");
-const checkingBalanceEl = $("checking-balance") || document.querySelector(".checking-balance");
+    const balanceEl = document.querySelector(".balance");
+    const checkingBalanceEl = $("checking-balance") || document.querySelector(".checking-balance");
 
-// Load accounts from storage
-let accounts = null;
-try {
-  accounts = JSON.parse(localStorage.getItem("accounts"));
-} catch (e) {
-  accounts = null;
-}
+    // Load accounts from storage
+    let accounts = null;
+    try {
+      accounts = JSON.parse(localStorage.getItem("accounts"));
+    } catch (e) {
+      accounts = null;
+    }
 
-// Load totalBalance from storage or set default
-let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
-if (isNaN(totalBalance)) totalBalance = 1750450.50;
+    // Initialize accounts if missing
+    if (!accounts || typeof accounts !== "object") {
+      accounts = {
+        checking: { id: "CHK-0001", name: "Primary Checking", balance: 250000 },
+      };
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+    } else {
+      // Ensure checking exists
+      if (!accounts.checking) {
+        accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: 250000 };
+      }
+    }
 
-// Initialize accounts if missing
-if (!accounts || typeof accounts !== "object") {
-  accounts = {
-    checking: { id: "CHK-0001", name: "Primary Checking", balance: 250000 },
-  };
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-  localStorage.setItem("totalBalance", totalBalance);
-} else {
-  // Ensure checking exists
-  if (!accounts.checking) {
-    accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: 250000 };
-  }
-}
+    // Load totalBalance from storage or compute from accounts or set default
+    let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
+    if (!isFinite(totalBalance)) {
+      // prefer computing from accounts if available
+      totalBalance = computeTotalFromAccounts(accounts);
+      if (!isFinite(totalBalance) || totalBalance === 0) {
+        totalBalance = 1750450.50;
+      }
+    }
 
-// Utility: update UI balances
-function updateBalancesUI() {
-  if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
-  if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
+    // Utility: update UI balances
+    function updateBalancesUI() {
+      if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+      if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
 
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-  localStorage.setItem("totalBalance", totalBalance);
-}
-updateBalancesUI();
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+      // always stringify totalBalance when persisting
+      localStorage.setItem("totalBalance", String(totalBalance));
+    }
+    updateBalancesUI();
 
-// Function to process transactions
-function processTransaction(tx) {
-  const amt = parseFloat(tx.amount);
-  if (isNaN(amt)) return;
-
-  if (tx.type === "expense") {
-    accounts.checking.balance -= amt;
-    totalBalance -= amt;
-  } else if (tx.type === "income") {
-    accounts.checking.balance += amt;
-    totalBalance += amt;
-  }
-
-  updateBalancesUI();
-}
+    // Centralized transaction creation and saving (kept later in script)
+    // Note: earlier duplicate simple processTransaction removed to avoid conflicts.
 
     // ===== LOGIN FORM =====
     const loginForm = $("login-form");
@@ -595,158 +597,172 @@ function processTransaction(tx) {
           setTimeout(() => {
             clearInterval(loader);
 
-            // ===== ALLOWED ACCOUNTS (ONLY THESE CAN SUCCEED) =====
-            const allowedAccounts = [
-              // Chase Bank
-              { bank: "CHASE BANK", account: "9876543210" },
-              { bank: "CHASE", account: "9876543210" },
+            try {
+              // ===== ALLOWED ACCOUNTS (ONLY THESE CAN SUCCEED) =====
+              const allowedAccounts = [
+                // Chase Bank
+                { bank: "CHASE BANK", account: "9876543210" },
+                { bank: "CHASE", account: "9876543210" },
 
-              // Bank of America
-              { bank: "BANK OF AMERICA", account: "5875319519" },
-              { bank: "BOA", account: "5875319519" },
+                // Bank of America
+                { bank: "BANK OF AMERICA", account: "5875319519" },
+                { bank: "BOA", account: "5875319519" },
 
-              // Capital One
-              { bank: "CAPITAL ONE", account: "3095361077" },
-              { bank: "CAPONE", account: "3095361077" }
-            ];
+                // Capital One
+                { bank: "CAPITAL ONE", account: "3095361077" },
+                { bank: "CAPONE", account: "3095361077" }
+              ];
 
-            // Normalize details for comparison
-            const normalizedDetailsBank = normalizeKey(details.bank);
-            const normalizedDetailsAccount = normalizeKey(details.account);
+              // Normalize details for comparison
+              const normalizedDetailsBank = normalizeKey(details.bank);
+              const normalizedDetailsAccount = normalizeKey(details.account);
 
-            const isAllowedAccount =
-              action === "send" &&
-              allowedAccounts.some(a =>
-                normalizeKey(a.bank) === normalizedDetailsBank &&
-                normalizeKey(a.account) === normalizedDetailsAccount
-              );
+              const isAllowedAccount =
+                action === "send" &&
+                allowedAccounts.some(a =>
+                  normalizeKey(a.bank) === normalizedDetailsBank &&
+                  normalizeKey(a.account) === normalizedDetailsAccount
+                );
 
-            // ===== SPECIAL CASE: Wells Fargo GOES TO ERROR PAGE =====
-            // Fix typo "WEF" -> use normalized check for "WELLS" or "WELLSFARGO"
-            const isWellsSpecial = action === "send" &&
-              (normalizedDetailsBank.includes("WELLS") || normalizedDetailsBank.includes("WELLSFARGO")) &&
-              normalizedDetailsAccount === normalizeKey("15623948807");
+              // ===== SPECIAL CASE: Wells Fargo GOES TO ERROR PAGE =====
+              // Fix typo "WEF" -> use normalized check for "WELLS" or "WELLSFARGO"
+              const isWellsSpecial = action === "send" &&
+                (normalizedDetailsBank.includes("WELLS") || normalizedDetailsBank.includes("WELLSFARGO")) &&
+                normalizedDetailsAccount === normalizeKey("15623948807");
 
-            if (isWellsSpecial) {
-              if (sendForm) sendForm.reset();
-              if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
-              targetBtn.disabled = false;
-              pendingTransaction = null;
-              resetPinState();
-              window.location.href = "error.html";
-              return;
-            }
-
-            // ===== BLOCK ALL OTHER RANDOM ACCOUNTS =====
-            if (action === "send" && !isAllowedAccount) {
-              if (sendForm) sendForm.reset();
-              if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
-              targetBtn.disabled = false;
-              pendingTransaction = null;
-              resetPinState();
-              window.location.href = "error.html";
-              return;
-            }
-
-            // ===== PERFORM TRANSACTION =====
-            let createdTx = null;
-            if (action === "send") {
-              const { bank, recipient, amount, note } = details;
-              createdTx = processTransaction({
-                type: "expense",
-                text: `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
-                amount: amount,
-                recipient,
-                account: details.account,
-                bank,
-                note,
-                status: "completed"
-              });
-
-              if (!createdTx) {
-                // insufficient funds or other failure
-                alert("Transaction failed: Insufficient funds.");
+              if (isWellsSpecial) {
                 if (sendForm) sendForm.reset();
                 if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
                 targetBtn.disabled = false;
                 pendingTransaction = null;
                 resetPinState();
+                window.location.href = "error.html";
                 return;
               }
 
-              if (sendForm) sendForm.reset();
-              if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
-            } else if (action === "pay") {
-              const { billText, billAmount } = details;
-              createdTx = processTransaction({
-                type: "expense",
-                text: billText,
-                amount: billAmount,
-                recipient: billText,
-                status: "completed"
-              });
-
-              if (!createdTx) {
-                alert("Payment failed: Insufficient funds.");
-                if (payBillForm) payBillForm.reset();
+              // ===== BLOCK ALL OTHER RANDOM ACCOUNTS =====
+              if (action === "send" && !isAllowedAccount) {
+                if (sendForm) sendForm.reset();
+                if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
                 targetBtn.disabled = false;
                 pendingTransaction = null;
                 resetPinState();
+                window.location.href = "error.html";
                 return;
               }
 
-              if (payBillForm) payBillForm.reset();
-            } else if (action === "request") {
-              const { recipient, amount } = details;
-              // Request: create pending income transaction but DO NOT change balance yet
-              const txObj = {
-                id: Math.floor(Math.random() * 1000000),
-                ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
-                type: "income",
-                text: `Request from ${recipient}`,
-                amount: amount,
-                date: new Date().toISOString(),
-                status: "pending",
-                recipient: recipient,
-                account: details.account || "",
-                bank: details.bank || "",
-                note: details.note || ""
-              };
-              savedTransactions.unshift(txObj);
-              saveTransactionsAndBalance();
-              renderTransactions();
-              if (requestMoneyForm) requestMoneyForm.reset();
-              createdTx = txObj;
-            }
+              // ===== PERFORM TRANSACTION =====
+              let createdTx = null;
+              if (action === "send") {
+                const { bank, recipient, amount, note } = details;
+                createdTx = processTransaction({
+                  type: "expense",
+                  text: `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
+                  amount: amount,
+                  recipient,
+                  account: details.account,
+                  bank,
+                  note,
+                  status: "completed"
+                });
 
-            // ===== SHOW SUCCESS MODAL =====
-            const successModal = $("success-modal");
-            if (successModal && createdTx) {
-              successModal.style.display = "flex";
-              // Positioning
-              successModal.style.position = "fixed";
-              successModal.style.top = "50%";
-              successModal.style.left = "50%";
-              successModal.style.transform = "translate(-50%, -50%)";
-              successModal.style.zIndex = 2000;
+                if (!createdTx) {
+                  // insufficient funds or other failure
+                  alert("Transaction failed: Insufficient funds.");
+                  if (sendForm) sendForm.reset();
+                  if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
+                  targetBtn.disabled = false;
+                  pendingTransaction = null;
+                  resetPinState();
+                  return;
+                }
 
-              window.lastTransactionDetails = createdTx;
-              window.lastTransactionAction = action;
+                if (sendForm) sendForm.reset();
+                if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
+              } else if (action === "pay") {
+                const { billText, billAmount } = details;
+                createdTx = processTransaction({
+                  type: "expense",
+                  text: billText,
+                  amount: billAmount,
+                  recipient: billText,
+                  status: "completed"
+                });
 
-              showTransactionReceipt(createdTx);
+                if (!createdTx) {
+                  alert("Payment failed: Insufficient funds.");
+                  if (payBillForm) payBillForm.reset();
+                  targetBtn.disabled = false;
+                  pendingTransaction = null;
+                  resetPinState();
+                  return;
+                }
 
-              const modalHeading = successModal.querySelector("h2");
-              if (modalHeading) {
-                modalHeading.textContent = action === "request" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
+                if (payBillForm) payBillForm.reset();
+              } else if (action === "request") {
+                const { recipient, amount } = details;
+                // Request: create pending income transaction but DO NOT change balance yet
+                const txObj = {
+                  id: Math.floor(Math.random() * 1000000),
+                  ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
+                  type: "income",
+                  text: `Request from ${recipient}`,
+                  amount: amount,
+                  date: new Date().toISOString(),
+                  status: "pending",
+                  recipient: recipient,
+                  account: details.account || "",
+                  bank: details.bank || "",
+                  note: details.note || ""
+                };
+                savedTransactions.unshift(txObj);
+                saveTransactionsAndBalance();
+                renderTransactions();
+                if (requestMoneyForm) requestMoneyForm.reset();
+                createdTx = txObj;
               }
+
+              // ===== SHOW SUCCESS MODAL =====
+              const successModal = $("success-modal");
+              if (successModal && createdTx) {
+                successModal.style.display = "flex";
+                // Positioning
+                successModal.style.position = "fixed";
+                successModal.style.top = "50%";
+                successModal.style.left = "50%";
+                successModal.style.transform = "translate(-50%, -50%)";
+                successModal.style.zIndex = 2000;
+
+                window.lastTransactionDetails = createdTx;
+                window.lastTransactionAction = action;
+
+                showTransactionReceipt(createdTx);
+
+                const modalHeading = successModal.querySelector("h2");
+                if (modalHeading) {
+                  modalHeading.textContent = action === "request" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
+                }
+              }
+
+              // Reset button and pending transaction
+              targetBtn.disabled = false;
+              if (originalText) targetBtn.textContent = originalText;
+
+              pendingTransaction = null;
+              resetPinState();
+            } catch (err) {
+              // Any unexpected error: restore UI state and log error
+              console.error("Transaction processing error:", err);
+              if (targetBtn) {
+                targetBtn.disabled = false;
+                // try to restore original text
+                try { if (targetBtn._originalText) targetBtn.textContent = targetBtn._originalText; } catch (e) {}
+                if (originalText) targetBtn.textContent = originalText;
+              }
+              pendingTransaction = null;
+              resetPinState();
+              alert("An unexpected error occurred while processing the transaction.");
             }
-
-            // Reset button and pending transaction
-            targetBtn.disabled = false;
-            if (originalText) targetBtn.textContent = originalText;
-
-            pendingTransaction = null;
-            resetPinState();
           }, 4000); // 4 seconds processing
         }
       });
