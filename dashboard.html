@@ -22,28 +22,31 @@
   <main class="dashboard-container">
 
     <!-- Account Balance -->
-    <div class="card balance-card">
-      <div class="balance-header">
-        <h3>Total Balance</h3>
-        <button id="toggle-balance" aria-label="Hide balance">👁</button>
-      </div>
+<div class="card balance-card">
+  <div class="balance-header">
+    <h3>Total Balance</h3>
+    <button id="toggle-balance" aria-label="Hide balance">👁</button>
+  </div>
 
-      <p class="balance sensitive">$1,500,450.50</p>
+  <!-- Total Balance -->
+  <p id="total-balance" class="balance sensitive">$1,500,450.50</p>
 
-      <div class="mini-cards">
-        <div class="mini-card">
-          <h4>Checking Account</h4>
-          <p class="sensitive">$250,000</p>
-          <small>For everyday spending</small>
-        </div>
-
-        <div class="mini-card">
-          <h4>Investment Account</h4>
-          <p class="sensitive">$1,250,450.50</p>
-          <small>For long-term savings</small>
-        </div>
-      </div>
+  <div class="mini-cards">
+    <!-- Checking Account -->
+    <div class="mini-card">
+      <h4>Checking Account</h4>
+      <p id="checking-balance" class="sensitive">$250,000</p>
+      <small>For everyday spending</small>
     </div>
+
+    <!-- Investment/Savings Account -->
+    <div class="mini-card">
+      <h4>Investment Account</h4>
+      <p id="investment-balance" class="sensitive">$1,250,450.50</p>
+      <small>For long-term savings</small>
+    </div>
+  </div>
+</div>
 
     <div class="spending-trends-card card">
       <h3>Monthly Spending Trends</h3>
