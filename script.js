@@ -66,19 +66,66 @@
       }, 0);
     }
 
-    // ===== TOTAL BALANCE =====
+    // ===== ACCOUNTS & TOTAL BALANCE =====
+    // We'll maintain a basic accounts object stored in localStorage.
+    // Checking account will be updated on every transaction (debit/credit).
     const balanceEl = document.querySelector(".balance");
+    const checkingBalanceEl = $("checking-balance") || document.querySelector(".checking-balance");
+
+    // Load accounts from storage (migration-friendly)
+    let accounts = null;
+    try {
+      accounts = JSON.parse(localStorage.getItem("accounts"));
+    } catch (e) { accounts = null; }
+
+    // Backwards-compatible totalBalance variable (kept in sync with accounts)
     let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
 
-    // Only set manual balance if nothing is stored yet
-    if (isNaN(totalBalance)) {
-      // Starting balance manually for demo. In production compute from transactions or fetch from server.
-      totalBalance = 1500450.50;
+    // If accounts missing, create one and seed checking with totalBalance or a sane default.
+    if (!accounts || typeof accounts !== "object") {
+      if (isNaN(totalBalance)) {
+        // Starting balance manually for demo
+        totalBalance = 1500450.50;
+      }
+      // Initialize accounts: primary checking account and optional others
+      accounts = {
+        checking: { id: "CHK-0001", name: "Primary Checking", balance: totalBalance },
+        // Other accounts could be added here, e.g. savings: { id: "SAV-0001", name: "Savings", balance: 0 }
+      };
+      // persist accounts and total
+      localStorage.setItem("accounts", JSON.stringify(accounts));
       localStorage.setItem("totalBalance", String(totalBalance));
+    } else {
+      // Ensure checking exists; if not, create it and seed from totalBalance or compute
+      if (!accounts.checking) {
+        const computedFromTransactions = computeBalanceFromTransactions(savedTransactions);
+        accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: !isNaN(totalBalance) ? totalBalance : computedFromTransactions || 0 };
+      }
     }
 
-    // Update display
-    if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+    // Utility: compute total balance by summing all account balances
+    function computeTotalFromAccounts(accs) {
+      return Object.keys(accs).reduce((s, k) => {
+        const b = parseFloat(accs[k] && accs[k].balance) || 0;
+        return s + b;
+      }, 0);
+    }
+
+    // Initialize totalBalance from accounts to avoid drift
+    totalBalance = computeTotalFromAccounts(accounts);
+    // persist up-to-date data
+    localStorage.setItem("accounts", JSON.stringify(accounts));
+    localStorage.setItem("totalBalance", String(totalBalance));
+
+    // Display both balances if elements exist
+    function updateBalancesUI() {
+      totalBalance = computeTotalFromAccounts(accounts);
+      if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+      if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
+      // keep legacy storage for other code expecting totalBalance
+      localStorage.setItem("totalBalance", String(totalBalance));
+    }
+    updateBalancesUI();
 
     // ===== LOGIN FORM =====
     const loginForm = $("login-form");
@@ -251,18 +298,42 @@
 
     function saveTransactionsAndBalance() {
       localStorage.setItem("transactions", JSON.stringify(savedTransactions));
-      localStorage.setItem("totalBalance", String(totalBalance));
+      // save accounts and total (accounts is source of truth)
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+      localStorage.setItem("totalBalance", String(computeTotalFromAccounts(accounts)));
     }
 
     // Centralized transaction creation and saving
     // txProps: { type: "income"|"expense", text, amount, recipient, account, bank, note, status }
+    // Returns txObj on success, null on failure (e.g. insufficient funds)
     function processTransaction(txProps) {
       // normalize amount to number
       const amtValue = (typeof txProps.amount === "number") ? txProps.amount : parseAmount(txProps.amount);
       const numericAmt = isNaN(amtValue) ? 0 : amtValue;
 
-      if (txProps.type === "expense") totalBalance -= numericAmt;
-      if (txProps.type === "income" && txProps.status !== "pending") totalBalance += numericAmt;
+      // Ensure checking account exists
+      if (!accounts || !accounts.checking) {
+        accounts = accounts || {};
+        accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: 0 };
+      }
+
+      // For expense transactions: debit checking account
+      if (txProps.type === "expense") {
+        // Prevent overdraft in this demo (reject transaction)
+        if (accounts.checking.balance < numericAmt) {
+          // Not enough funds: do not create transaction
+          return null;
+        }
+        accounts.checking.balance = Number((accounts.checking.balance - numericAmt).toFixed(2));
+      }
+
+      // For income transactions that are not pending: credit checking
+      if (txProps.type === "income" && txProps.status !== "pending") {
+        accounts.checking.balance = Number((accounts.checking.balance + numericAmt).toFixed(2));
+      }
+
+      // Recompute totalBalance from accounts (single source of truth)
+      totalBalance = computeTotalFromAccounts(accounts);
 
       const txObj = {
         id: Math.floor(Math.random() * 1000000),
@@ -283,7 +354,7 @@
       renderTransactions();
 
       // Update visible balance in UI if present
-      if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+      updateBalancesUI();
 
       // Save last transaction details without polluting window in production.
       // For demo convenience we keep a window reference but it's optional.
@@ -371,7 +442,7 @@
         pendingTransaction = null;
       });
 
-      // ===== PROCEED CONFIRM =====
+       // ===== PROCEED CONFIRM =====
       proceedConfirm.addEventListener("click", () => {
         confirmModal.style.display = "none";
         if (pendingTransaction && pinModal) {
@@ -435,7 +506,8 @@
         const note = billNoteEl ? billNoteEl.value.trim() : "";
 
         if (!billText || isNaN(billAmount) || billAmount <= 0) return alert("Fill all fields correctly.");
-        if (billAmount > totalBalance) return alert("Insufficient funds.");
+        // Check against checking balance (primary account)
+        if (billAmount > (accounts.checking.balance || 0)) return alert("Insufficient funds.");
 
         pendingTransaction = { action: "pay", details: { billText, billAmount, note } };
         // Use populateConfirmModal if confirm modal exists
@@ -595,6 +667,18 @@
                 note,
                 status: "completed"
               });
+
+              if (!createdTx) {
+                // insufficient funds or other failure
+                alert("Transaction failed: Insufficient funds.");
+                if (sendForm) sendForm.reset();
+                if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
+                targetBtn.disabled = false;
+                pendingTransaction = null;
+                resetPinState();
+                return;
+              }
+
               if (sendForm) sendForm.reset();
               if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
             } else if (action === "pay") {
@@ -606,6 +690,16 @@
                 recipient: billText,
                 status: "completed"
               });
+
+              if (!createdTx) {
+                alert("Payment failed: Insufficient funds.");
+                if (payBillForm) payBillForm.reset();
+                targetBtn.disabled = false;
+                pendingTransaction = null;
+                resetPinState();
+                return;
+              }
+
               if (payBillForm) payBillForm.reset();
             } else if (action === "request") {
               const { recipient, amount } = details;
@@ -822,7 +916,7 @@
       });
     }
 
-    // ===== QUICK ACTION CARDS =====
+  // ===== QUICK ACTION CARDS =====
     const quickButtons = document.querySelectorAll(".quick-btn");
     quickButtons.forEach(btn => {
       btn.addEventListener("click", () => {
