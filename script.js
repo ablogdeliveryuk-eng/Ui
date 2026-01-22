@@ -66,68 +66,61 @@
       }, 0);
     }
 
-    // ===== ACCOUNTS & TOTAL BALANCE =====
-    // We'll maintain a basic accounts object stored in localStorage.
-    // Checking account will be updated on every transaction (debit/credit).
-    const balanceEl = document.querySelector(".balance");
-    const checkingBalanceEl = $("checking-balance") || document.querySelector(".checking-balance");
+     // ===== ACCOUNTS & TOTAL BALANCE =====
+const balanceEl = document.querySelector(".balance");
+const checkingBalanceEl = $("checking-balance") || document.querySelector(".checking-balance");
 
-    // Load accounts from storage (migration-friendly)
-    let accounts = null;
-    try {
-      accounts = JSON.parse(localStorage.getItem("accounts"));
-    } catch (e) { accounts = null; }
+// Load accounts from storage
+let accounts = null;
+try {
+  accounts = JSON.parse(localStorage.getItem("accounts"));
+} catch (e) {
+  accounts = null;
+}
 
-    // Backwards-compatible totalBalance variable (kept in sync with accounts)
-    let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
+// Load totalBalance from storage or set default
+let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
+if (isNaN(totalBalance)) totalBalance = 1750450.50;
 
-    // If accounts missing, create one and seed checking with totalBalance or a sane default.
-    if (!accounts || typeof accounts !== "object") {
-      if (isNaN(totalBalance)) {
-        // Starting balance manually for demo
-        totalBalance = 1750450.50;
-      }
-      // Initialize accounts: primary checking account and optional others
-      accounts = {
-       checking: { id: "CHK-0001", name: "Primary Checking", balance: 250000 },
-      };
-      // persist accounts and total
-      localStorage.setItem("accounts", JSON.stringify(accounts));
-      localStorage.setItem("totalBalance", String(totalBalance));
-    } else {
-      // Ensure checking exists; if not, create it and seed from totalBalance or compute
-      if (!accounts.checking) {
-        const computedFromTransactions = computeBalanceFromTransactions(savedTransactions);
-        accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: !isNaN(totalBalance) ? totalBalance : computedFromTransactions || 0 };
-      }
-    }
+// Initialize accounts if missing
+if (!accounts || typeof accounts !== "object") {
+  accounts = {
+    checking: { id: "CHK-0001", name: "Primary Checking", balance: 250000 },
+  };
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+  localStorage.setItem("totalBalance", totalBalance);
+} else {
+  // Ensure checking exists
+  if (!accounts.checking) {
+    accounts.checking = { id: "CHK-0001", name: "Primary Checking", balance: 250000 };
+  }
+}
 
-    // Utility: compute total balance by summing all account balances
-    function computeTotalFromAccounts(accs) {
-      return Object.keys(accs).reduce((s, k) => {
-        const b = parseFloat(accs[k] && accs[k].balance) || 0;
-        return s + b;
-      }, 0);
-    }
+// Utility: update UI balances
+function updateBalancesUI() {
+  if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+  if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
 
-    // Make sure totalBalance exists in storage
-    if (isNaN(totalBalance)) {
-    totalBalance = 1750450.50;
-    localStorage.setItem("totalBalance", String(totalBalance));
-   }
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+  localStorage.setItem("totalBalance", totalBalance);
+}
+updateBalancesUI();
 
-    // persist accounts as is
-    localStorage.setItem("accounts", JSON.stringify(accounts));
+// Function to process transactions
+function processTransaction(tx) {
+  const amt = parseFloat(tx.amount);
+  if (isNaN(amt)) return;
 
-    // Display both balances if elements exist
-    function updateBalancesUI() {
-      totalBalance = computeTotalFromAccounts(accounts);
-      if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
-      if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
-      // keep legacy storage for other code expecting totalBalance
-      localStorage.setItem("totalBalance", String(totalBalance));
-    }
-    updateBalancesUI();
+  if (tx.type === "expense") {
+    accounts.checking.balance -= amt;
+    totalBalance -= amt;
+  } else if (tx.type === "income") {
+    accounts.checking.balance += amt;
+    totalBalance += amt;
+  }
+
+  updateBalancesUI();
+}
 
     // ===== LOGIN FORM =====
     const loginForm = $("login-form");
