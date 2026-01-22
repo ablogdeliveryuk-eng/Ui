@@ -1020,5 +1020,9 @@ updateBalancesUI();
     if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
     if (accountSettingsBtn) accountSettingsBtn.addEventListener("click", () => window.location.href = "account.html");
 
+    if ("serviceWorker" in navigator) {
+       navigator.serviceWorker.register("sw.js");
+    }
+    
   });
 })();
