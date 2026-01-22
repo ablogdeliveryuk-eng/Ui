@@ -89,8 +89,7 @@
       }
       // Initialize accounts: primary checking account and optional others
       accounts = {
-        checking: { id: "CHK-0001", name: "Primary Checking", balance: totalBalance },
-        // Other accounts could be added here, e.g. savings: { id: "SAV-0001", name: "Savings", balance: 0 }
+       checking: { id: "CHK-0001", name: "Primary Checking", balance: 250000 },
       };
       // persist accounts and total
       localStorage.setItem("accounts", JSON.stringify(accounts));
