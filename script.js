@@ -112,7 +112,7 @@
 
     // Make sure totalBalance exists in storage
     if (isNaN(totalBalance)) {
-    totalBalance = 1700450.50;
+    totalBalance = 1750450.50;
     localStorage.setItem("totalBalance", String(totalBalance));
    }
 
