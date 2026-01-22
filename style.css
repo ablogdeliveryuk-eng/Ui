@@ -817,26 +817,34 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   border: 2px solid rgba(255,255,255,0.25); /* subtle professional border */
 }
 
-/* Transfer Funds button styling (professional blue) */
-#toggle-transfer-btn {
-  background-color: var(--color-primary); /* uses your existing primary blue */
+/* Transfer Funds button container (for animation) */
+.send-money-card #toggle-transfer-btn {
+  background-color: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
   padding: 10px 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+
+  /* animation support */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
 }
 
-#toggle-transfer-btn:hover {
-  background-color: var(--color-primary-strong); /* darker blue on hover */
+/* Hover effect */
+.send-money-card #toggle-transfer-btn:hover {
+  background-color: var(--color-primary-strong);
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Hide Transfer Funds button by default */
-#toggle-transfer-btn {
-  display: none; /* keep it hidden until JS shows it */
+/* Active / visible state */
+.send-money-card #toggle-transfer-btn.active {
+  max-height: 50px; /* enough to fully show the button */
+  opacity: 1;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
 }
