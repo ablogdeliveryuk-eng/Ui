@@ -1019,6 +1019,16 @@ updateBalancesUI();
 
     if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
     if (accountSettingsBtn) accountSettingsBtn.addEventListener("click", () => window.location.href = "account.html");
+
+    document.getElementById("view-history-btn")?.addEventListener("click", () => {
+    const loader = document.createElement("div");
+    loader.id = "page-loader";
+    loader.innerHTML = `<div class="spinner"></div><p>Loading transaction history…</p>`;
+    document.body.appendChild(loader);
+
+    setTimeout(() => {
+    window.location.href = "history.html";
+  }, 2500);
     
   });
 })();
