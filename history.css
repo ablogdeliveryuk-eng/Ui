@@ -83,7 +83,7 @@ th {
 .history-header {
   background: #005eb8;
   color: #fff;
-  padding: 16px 20px; /* top-bottom 16px, left-right 20px */
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between; /* pushes text left, logo right */
@@ -95,8 +95,8 @@ th {
   font-weight: 600;
 }
 
-.header-logo {
-  height: 40px; /* adjust height as needed */
-  width: auto;
+.history-header .header-logo {
+  height: 40px; /* adjust if needed */
+  width: auto;  /* keep logo proportional */
   display: block;
 }
