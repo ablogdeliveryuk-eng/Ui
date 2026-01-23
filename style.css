@@ -880,3 +880,73 @@ li span.description {
   color: #333; /* dark gray */
   font-weight: 500; /* medium weight */
 }
+
+/* Header styling */
+.history-header {
+  display: flex;
+  justify-content: center; /* centers the title horizontally */
+  align-items: center;
+  background-color: #005eb8; /* blue header */
+  color: white;
+  padding: 20px;
+  border-radius: 8px 8px 0 0;
+}
+
+.history-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between text and logo */
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600; /* slightly bold, professional */
+}
+
+.header-logo {
+  height: 30px; /* adjust to match dashboard aesthetic */
+  object-fit: contain;
+}
+
+/* Main content */
+.history-container {
+  padding: 20px;
+}
+
+/* Table styling */
+.history-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.history-container th,
+.history-container td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.history-container th {
+  background-color: #f4f6f8;
+  font-weight: 600;
+}
+
+/* Back button below main content */
+.back-button-container {
+  text-align: left; /* aligns button to left; change to right or center if desired */
+  margin-top: 20px;
+}
+
+.back-button-container button {
+  background-color: #005eb8;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.back-button-container button:hover {
+  background-color: #0079d3; /* subtle hover effect */
+}
