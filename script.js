@@ -197,13 +197,17 @@ updateBalancesUI();
         left.textContent = tx.text || "";
         const right = document.createElement("span");
         right.textContent = (tx.type === "expense" ? "- " : "") + formatCurrency(isNaN(amt) ? 0 : amt);
+
+        li.appendChild(left); // description stays default color
+
+        // Only the amount (right span) is colored
         if (tx.type === "income") {
-        right.style.color = "green";   // green for income
-       } else if (tx.type === "expense") {
-        right.style.color = "red";     // red for expense
-       }
-        li.appendChild(left);
-        li.appendChild(right);
+        right.style.color = "green";   // green only for income amount
+        } else if (tx.type === "expense") {
+        right.style.color = "red";     // red only for expense amount
+        }
+
+        li.appendChild(right); // append the amount span
 
         const viewBtn = document.createElement("button");
         viewBtn.textContent = "View Receipt";
