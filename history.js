@@ -3,7 +3,7 @@
 // ---------------------------
 const historyData = [
   { date: "2025-01-14", time: "10:15:23", desc: "Amazon Purchase", amount: "-$18,200", status: "Completed", recipientName: "Amazon Inc.", recipientAccount: "****8564", recipientBank: "Amazon Payments", transactionID: "TX-100001", referenceNumber: "REF-500001" },
-  { date: "2025-02-02", time: "09:00:00", desc: "Salary Credit", amount: "+$4,500", status: "Completed", recipientName: "John Doe", recipientAccount: "****7678", recipientBank: "Chase Bank", transactionID: "TX-100002", referenceNumber: "REF-500002" },
+  { date: "2025-02-02", time: "09:00:00", desc: "Interior Investment", amount: "-$450,500", status: "Completed", recipientName: "Sophia Johnson", recipientAccount: "****7678", recipientBank: "Bank Of America", transactionID: "TX-100002", referenceNumber: "REF-500002" },
   { date: "2025-03-11", time: "14:22:10", desc: "Electricity Bill", amount: "-$180", status: "Completed", recipientName: "Electric Co.", recipientAccount: "****0847", recipientBank: "Wells Fargo", transactionID: "TX-100003", referenceNumber: "REF-500003" },
   { date: "2025-04-07", time: "16:45:30", desc: "Wire Transfer", amount: "-$150,000", status: "Completed", recipientName: "Jane Smith", recipientAccount: "****4463", recipientBank: "Bank of America", transactionID: "TX-100004", referenceNumber: "REF-500004" },
   { date: "2025-05-21", time: "11:30:12", desc: "Investment Dividend", amount: "+$200,300", status: "Completed", recipientName: "Furniture Investments", recipientAccount: "****0867", recipientBank: "Capital One", transactionID: "TX-100005", referenceNumber: "REF-500005" },
