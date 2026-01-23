@@ -110,3 +110,10 @@ th {
   margin-top: 30px;         /* spacing from content above */
   border-top: 1px solid #004080; /* subtle top border for separation */
 }
+
+.transaction-note {
+  color: #333;          /* dark gray, not too bright */
+  font-size: 14px;      /* slightly smaller than header */
+  margin: 8px 20px 16px 20px;  /* spacing around it */
+  font-style: italic;   /* subtle professional touch */
+}
