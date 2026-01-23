@@ -2,24 +2,24 @@
 // Transaction History Data
 // ---------------------------
 const historyData = [
-  { date: "2025-01-14", desc: "Amazon Purchase", amount: "-$1,200", status: "Completed", recipientName: "Amazon Inc.", recipientAccount: "****8564", recipientBank: "Amazon Payments" },
+  { date: "2025-01-14", desc: "Amazon Purchase", amount: "-$18,200", status: "Completed", recipientName: "Amazon Inc.", recipientAccount: "****8564", recipientBank: "Amazon Payments" },
   { date: "2025-02-02", desc: "Salary Credit", amount: "+$4,500", status: "Completed", recipientName: "John Doe", recipientAccount: "****7678", recipientBank: "Chase Bank" },
-  { date: "2025-03-11", desc: "Electricity Bill", amount: "-$180", status: "Completed", recipientName: "Electric Co.", recipientAccount: "****0847", recipientBank: "Utility Bank" },
-  { date: "2025-04-07", desc: "Wire Transfer", amount: "-$15,000", status: "Completed", recipientName: "Jane Smith", recipientAccount: "****4463", recipientBank: "Bank of America" },
-  { date: "2025-05-21", desc: "Investment Dividend", amount: "+$2,300", status: "Completed", recipientName: "XYZ Investments", recipientAccount: "****0867", recipientBank: "Capital One" },
+  { date: "2025-03-11", desc: "Electricity Bill", amount: "-$180", status: "Completed", recipientName: "Electric Co.", recipientAccount: "****0847", recipientBank: "Wells Fargo" },
+  { date: "2025-04-07", desc: "Wire Transfer", amount: "-$150,000", status: "Completed", recipientName: "Jane Smith", recipientAccount: "****4463", recipientBank: "Bank of America" },
+  { date: "2025-05-21", desc: "Investment Dividend", amount: "+$200,300", status: "Completed", recipientName: "Furniture Investments", recipientAccount: "****0867", recipientBank: "Capital One" },
   { date: "2025-06-10", desc: "Netflix Subscription", amount: "-$19.99", status: "Completed", recipientName: "Netflix", recipientAccount: "****7878", recipientBank: "Netflix Payments" },
   { date: "2025-07-03", desc: "ATM Withdrawal", amount: "-$15500", status: "Completed", recipientName: "Self", recipientAccount: "****9088", recipientBank: "Chase Bank" },
-  { date: "2025-08-16", desc: "Transfer to John Doe", amount: "-$3,200", status: "Completed", recipientName: "John Doe", recipientAccount: "****9876", recipientBank: "Bank of America" },
+  { date: "2025-08-16", desc: "Transfer to Sarah Martinez", amount: "-$35,200", status: "Completed", recipientName: "Sarah Martinez", recipientAccount: "****9876", recipientBank: "Bank of America" },
   { date: "2025-09-09", desc: "Bonus Payment", amount: "+$18000", status: "Completed", recipientName: "Employer Inc.", recipientAccount: "****6564", recipientBank: "Chase Bank" },
-  { date: "2025-10-28", desc: "Online Purchase", amount: "-$1750", status: "Completed", recipientName: "Online Shop", recipientAccount: "****2498", recipientBank: "PayPal" },
+  { date: "2025-10-28", desc: "Online Purchase", amount: "-$1750", status: "Completed", recipientName: "Online Shop", recipientAccount: "****2498", recipientBank: "Wells Fargo" },
   // NEW 10 RANDOM TRANSACTIONS
   { date: "2025-11-05", desc: "Spotify Subscription", amount: "-$14.99", status: "Completed", recipientName: "Spotify", recipientAccount: "****7765", recipientBank: "Spotify Payments" },
-  { date: "2025-11-12", desc: "Gym Membership", amount: "-$60", status: "Completed", recipientName: "FitGym", recipientAccount: "****7945", recipientBank: "FitBank" },
+  { date: "2025-11-12", desc: "Gym Membership", amount: "-$160", status: "Completed", recipientName: "FitGym", recipientAccount: "****7945", recipientBank: "FitBank" },
   { date: "2025-11-15", desc: "Apple Store Purchase", amount: "-$1,250", status: "Completed", recipientName: "Apple Store", recipientAccount: "****0678", recipientBank: "Apple Payments" },
   { date: "2025-11-18", desc: "Dividend Payout", amount: "+$1,200", status: "Completed", recipientName: "Furniture Investments", recipientAccount: "****5644", recipientBank: "Capital One" },
   { date: "2025-11-20", desc: "Uber Ride", amount: "-$25", status: "Completed", recipientName: "Uber", recipientAccount: "****6671", recipientBank: "Uber Payments" },
-  { date: "2025-11-23", desc: "Amazon Purchase", amount: "-$3200", status: "Completed", recipientName: "Amazon Inc.", recipientAccount: "****7455", recipientBank: "Amazon Payments" },
-  { date: "2025-11-25", desc: "PayPal Transfer", amount: "-$400", status: "Completed", recipientName: "Freelancer Jane", recipientAccount: "****4573", recipientBank: "PayPal" },
+  { date: "2025-11-23", desc: "Amazon Purchase", amount: "-$30200", status: "Completed", recipientName: "Amazon Inc.", recipientAccount: "****7455", recipientBank: "Amazon Payments" },
+  { date: "2025-11-25", desc: "PayPal Transfer", amount: "-$40000", status: "Completed", recipientName: "Freelancer Jane", recipientAccount: "****4573", recipientBank: "PNC Bank" },
   { date: "2025-11-27", desc: "Freelance Payment", amount: "+$1800", status: "Completed", recipientName: "Charles Williams", recipientAccount: "****9675", recipientBank: "Chase Bank" },
   { date: "2025-11-30", desc: "Grocery Store", amount: "-$15000", status: "Completed", recipientName: "Grocery Mart", recipientAccount: "****8799", recipientBank: "Bank Of America" },
   { date: "2025-12-02", desc: "Charity Donation", amount: "-$20000", status: "Completed", recipientName: "Helping Hands", recipientAccount: "****0874", recipientBank: "Citi Bank" }
