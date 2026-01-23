@@ -182,6 +182,52 @@
 
   <script src="view-history-fix.js"></script>
 
+  <script>
+(function () {
+  const btn = document.getElementById("view-history-btn");
+  if (!btn) return;
+
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    // Disable button while loading
+    btn.disabled = true;
+    btn.textContent = "Loading…";
+
+    // Create loader
+    let loader = document.createElement("div");
+    loader.id = "page-loader";
+    loader.innerHTML = `
+      <div class="spinner" style="margin:20px auto; width:40px; height:40px; border:5px solid #ccc; border-top:5px solid #005eb8; border-radius:50%; animation:spin 1s linear infinite;"></div>
+      <p style="text-align:center; font-family:sans-serif;">Fetching transaction history…</p>
+    `;
+    document.body.appendChild(loader);
+
+    // Simulate loading delay, then navigate
+    setTimeout(() => {
+      window.location.href = "history.html";
+    }, 2500);
+  });
+})();
+</script>
+
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+#page-loader {
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: rgba(255,255,255,0.9);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+</style>
+
   <footer class="login-footer">
     <div class="footer-links">
       <a href="privacy.html">Privacy</a> |
