@@ -853,3 +853,12 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Transaction types */
+li.income span {
+  color: green;
+}
+
+li.expense span {
+  color: red;
+}
