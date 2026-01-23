@@ -100,3 +100,13 @@ th {
   width: auto;  /* keep logo proportional */
   display: block;
 }
+
+.site-footer {
+  background: #005eb8;      /* same blue as header for consistency */
+  color: #fff;              /* white text */
+  text-align: center;       /* center the text */
+  padding: 12px 20px;       /* vertical and horizontal padding */
+  font-size: 14px;
+  margin-top: 30px;         /* spacing from content above */
+  border-top: 1px solid #004080; /* subtle top border for separation */
+}
