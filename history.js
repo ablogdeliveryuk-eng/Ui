@@ -113,60 +113,97 @@ function handleViewReceiptClicks() {
       });
 
       // Download PDF
-      modal.querySelector("#download-receipt").addEventListener("click", () => {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+      document.addEventListener("DOMContentLoaded", () => {
+  const downloadBtns = document.querySelectorAll(".download-receipt-btn");
 
-  // Header
-  doc.setFontSize(18);
-  doc.text("Transaction Receipt", 105, 20, null, null, "center");
+  downloadBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (!window.jspdf) return alert("PDF export not available.");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-  doc.setFontSize(11);
-  doc.text(`Transaction ID: TX-${Math.floor(Math.random()*1000000)}`, 20, 35);
-  doc.text(`Reference Number: REF-${Math.floor(Math.random()*1000000)}`, 20, 42);
-  doc.text(`Payment Date: ${tx.date}`, 20, 49);
-  doc.text(`Time-Stamp: ${new Date().toLocaleTimeString()}`, 20, 56);
+      // Fetch transaction data from data attributes on button
+      const details = {
+        id: btn.dataset.id || "TX" + Math.floor(100000 + Math.random() * 900000),
+        ref: btn.dataset.ref || "REF" + Math.floor(100000000 + Math.random() * 900000000),
+        date: btn.dataset.date || new Date().toLocaleDateString(),
+        time: btn.dataset.time || new Date().toLocaleTimeString("en-US", { hour12: false }),
+        amount: btn.dataset.amount || "$0.00",
+        fee: btn.dataset.fee || "0.00",
+        recipient: btn.dataset.recipient || "[Insert Beneficiary Name / Account Details]",
+        status: btn.dataset.status || "Completed / Successful"
+      };
 
-  doc.line(20, 60, 190, 60); // horizontal line
+      let y = 20;
 
-  doc.setFontSize(12);
-  doc.text("Transfer Details", 20, 68);
-  doc.setFontSize(11);
-  doc.text(`Payment Amount: ${tx.amount}`, 20, 75);
-  doc.text("Transaction Fee: $0.00", 20, 82);
+      // ===== Logo =====
+      try {
+        const logo = new Image();
+        logo.src = "chase-logo.png"; // same as main page
+        doc.addImage(logo, "PNG", 20, 12, 35, 12);
+      } catch (e) { /* ignore if logo missing */ }
 
-  doc.line(20, 86, 190, 86); // horizontal line
+      // ===== Watermark =====
+      doc.setTextColor(220);
+      doc.setFontSize(40);
+      doc.text("CONFIDENTIAL", 105, 150, { align: "center", angle: 30 });
+      doc.setTextColor(0); // reset color
 
-  doc.setFontSize(12);
-  doc.text("Account Information", 20, 94);
-  doc.setFontSize(11);
-  doc.text("From Account: JPMorgan Chase Bank, N.A. (****8433)", 20, 101);
-  doc.text(`To Account: ${tx.recipientAccount}`, 20, 108);
-  doc.text(`Recipient Name: ${tx.recipientName}`, 20, 115);
-  doc.text(`Recipient Bank: ${tx.recipientBank}`, 20, 122);
+      // ===== Header =====
+      doc.setFontSize(18);
+      doc.text("JPMORGAN CHASE BANK", 105, y, { align: "center" });
+      y += 8;
+      doc.setFontSize(14);
+      doc.text("PAYMENT RECEIPT", 105, y, { align: "center" });
+      y += 16;
 
-  doc.line(20, 126, 190, 126); // horizontal line
+      // Line separator
+      doc.setLineWidth(0.5);
+      doc.line(20, y, 190, y);
+      y += 10;
 
-  doc.setFontSize(12);
-  doc.text("Authorization Statement", 20, 134);
-  doc.setFontSize(11);
-  doc.text(
-    "I hereby confirm that I have authorized an electronic debit from my payment account in the amount stated above. This transaction was approved by the account holder and processed in accordance with applicable banking regulations.",
-    20,
-    141,
-    { maxWidth: 170 }
-  );
+      // ===== Transaction Info =====
+      doc.setFontSize(12);
+      doc.text(`Transaction ID: ${details.id}`, 20, y); y += 8;
+      doc.text(`Reference Number: ${details.ref}`, 20, y); y += 8;
+      doc.text(`Payment Date: ${details.date}`, 20, y); y += 8;
+      doc.text(`Time‑Stamp: ${details.time}`, 20, y); y += 12;
 
-  doc.line(20, 160, 190, 160); // horizontal line
+      // ===== Transfer Details =====
+      doc.setFontSize(14); doc.text("Transfer Details", 20, y); y += 8;
+      doc.setFontSize(12);
+      doc.text(`Payment Amount: ${details.amount}`, 20, y); y += 8;
+      doc.text(`Transaction Fee: ${details.fee}`, 20, y); y += 8;
 
-  doc.text(`Transaction Status: ${tx.status}`, 20, 168);
+      // ===== Account Info =====
+      doc.setFontSize(14); doc.text("Account Information", 20, y); y += 8;
+      doc.setFontSize(12);
+      doc.text("From Account: JPMorgan Chase Bank, N.A. (****8433)", 20, y); y += 8;
+      doc.text("SWIFT / BIC: CHASUS33", 20, y); y += 8;
+      doc.text(`To Account: ${details.recipient}`, 20, y); y += 12;
 
-  doc.line(20, 172, 190, 172); // horizontal line
+      // ===== Authorization Statement =====
+      doc.setFontSize(14); doc.text("Authorization Statement", 20, y); y += 8;
+      doc.setFontSize(12);
+      const authText = "I hereby confirm that I have authorized an electronic debit from my payment account in the amount stated above. This transaction was approved by the account holder and processed in accordance with applicable banking regulations.";
+      const splitAuth = doc.splitTextToSize(authText, 170);
+      doc.text(splitAuth, 20, y);
+      y += splitAuth.length * 7 + 4;
 
-  doc.setFontSize(9);
-  doc.text("This receipt was generated electronically.", 20, 180);
+      // ===== Transaction Status =====
+      doc.setFontSize(12);
+      doc.text(`Transaction Status: ${details.status}`, 20, y); y += 12;
 
-  doc.save(`receipt-${tx.date}.pdf`);
+      // ===== Footer =====
+      doc.setLineWidth(0.5);
+      doc.line(20, y, 190, y); y += 6;
+      doc.setFontSize(10);
+      doc.text("This receipt was generated electronically.", 105, y, { align: "center" });
+
+      // ===== Save PDF =====
+      doc.save(`${details.id || "receipt"}.pdf`);
+    });
+  });
 });
       
 // Initialize
