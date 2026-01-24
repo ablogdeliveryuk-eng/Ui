@@ -70,19 +70,20 @@ if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
       note: "" 
     },
     {
-     id: 1100013,
-     ref: "REF1100013",
-     type: "income",
-     text: "Special Investment Profit",
-     amount: "$500,000.00",
-     date: "2026-01-23T00:09:13",
-     senderName: "Johnny Adams",           // << professional sender name
-     senderAccount: "15623948807",
-     senderBank: "Wells Fargo",
-     recipientName: "Charles Williams", // << your name as recipient
-     recipientAccount: "21908488433",
-     recipientBank: "Charles Williams",
-     note: ""
+      id: Math.floor(Math.random() * 1000000),
+      ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
+      type: "income",
+      text: "Special Investment Profit",
+      amount: 500000,
+      date: "2026-01-15T10:30:00",  // Fixed date and time
+      status: "completed",
+      recipient: "Charles Williams",
+      recipientAccount: "21908488433",
+      recipientBank: "Charles Williams",
+      senderName: "Johnny Adams",
+      senderAccount: "15623948807",
+      senderBank: "Wells Fargo",
+      note: ""
     }
   ];
 
@@ -961,14 +962,15 @@ updateBalancesUI();
         doc.setFontSize(12);
         let fromAccountText = "";
 
-        if (details.type === "income" && details.senderName && details.senderAccount && details.senderBank) {
-        fromAccountText = `${details.senderName} — ${details.senderAccount} (${details.senderBank})`;
-       } else if (details.type === "income") {
-        fromAccountText = "[Sender info missing]";
-       } else {
-        // Expense / outgoing transactions
+        if (details.type === "income") {
+        fromAccountText = [
+        details.senderName,
+        details.senderAccount,
+        details.senderBank
+       ].filter(Boolean).join(" — ") || "[Sender info missing]";
+      } else {
         fromAccountText = "JPMorgan Chase Bank, N.A. (****8433)";
-       }
+      }
 
         doc.text("From Account: " + fromAccountText, 20, y);
         y += 12;
