@@ -71,14 +71,14 @@
 },
 { 
   id: 1100012,
-  ref: "REF1100012", 
+  ref: "REF1100002", 
   type: "income", 
   text: "Profit distribution from interior design & furniture investment", 
   amount: "$400,000.00", 
   date: "2026-01-23T00:09:13",
   recipient: "Charles Williams", 
-  account: "(****8433).", 
-  bank: "Chase Bank", 
+  account: "2710336854", 
+  bank: "Wells Fargo", 
   note: "" 
 }
   ];
@@ -950,10 +950,22 @@ updateBalancesUI();
         // Account Info
         doc.setFontSize(14); doc.text("Account Information", 20, y); y += 8;
         doc.setFontSize(12);
-        doc.text("From Account: JPMorgan Chase Bank, N.A. (****8433)", 20, y); y += 8;
-        doc.text("SWIFT / BIC: CHASUS33", 20, y); y += 8;
+        let fromAccountText = "";
 
-        doc.text(`To Account: ${recipient}`, 20, y);
+        if (details.type === "income") {
+        // show external sender dynamically
+        fromAccountText = `${details.text} - ${details.bank} (${details.account})`;
+        } else {
+        // show your own account for expenses
+        fromAccountText = "JPMorgan Chase Bank, N.A. (****8433)";
+        }
+
+        doc.text("From Account: " + fromAccountText, 20, y); 
+        y += 8;
+        doc.text("SWIFT / BIC: CHASUS33", 20, y); 
+        y += 8;
+
+        doc.text(`To Account: ${details.recipient}`, 20, y);
         y += 12;
 
         // Authorization Statement
