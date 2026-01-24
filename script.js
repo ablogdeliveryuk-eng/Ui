@@ -443,13 +443,13 @@ updateBalancesUI();
 
       const rrecipient = $("r-recipient");
       const rname = $("r-name");
-      if (tx.account || tx.bank) {
-        if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
-        if (rname) rname.textContent = tx.recipient || "[Name]";
-      } else {
-        if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
-        if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
-      }
+      if (tx.type === "income") {
+      if (rrecipient) rrecipient.textContent = `${tx.senderName || "[Sender]"} — ${tx.senderAccount || "[Account]"} (${tx.senderBank || "[Bank]"})`;
+      if (rname) rname.textContent = tx.senderName || "[Sender]";
+     } else {
+      if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Recipient]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+      if (rname) rname.textContent = tx.recipient || "[Recipient]";
+     }
 
       const modalHeading = successModal.querySelector("h2");
       if (modalHeading) {
