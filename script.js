@@ -972,7 +972,19 @@ updateBalancesUI();
         // Account Info
         doc.setFontSize(14); doc.text("Account Information", 20, y); y += 8;
         doc.setFontSize(12);
-        doc.text("From Account: JPMorgan Chase Bank, N.A. (****8433)", 20, y); y += 8;
+        if (details.type === "income") {
+        // Money coming to you
+        doc.text(`From Account: ${details.senderName || "[Sender]"} — ${details.senderAccount || "[Account]"} (${details.senderBank || "[Bank]"})`, 20, y); 
+        y += 8;
+        doc.text(`To Account: ${details.recipient || "[You]"} — ${details.account || "[Account]"} (${details.bank || "[Bank]"})`, 20, y); 
+        y += 8;
+       } else {
+        // Money going out from you
+        doc.text(`From Account: ${details.senderName || "[You]"} — ${details.senderAccount || "[Account]"} (${details.senderBank || "[Bank]"})`, 20, y); 
+        y += 8;
+        doc.text(`To Account: ${details.recipient || "[Recipient]"} — ${details.recipientAccount || "[Account]"} (${details.recipientBank || "[Bank]"})`, 20, y); 
+        y += 8;
+       }
         doc.text("SWIFT / BIC: CHASUS33", 20, y); y += 8;
 
         doc.text(`To Account: ${recipient}`, 20, y);
