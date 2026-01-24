@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hardcoded Income</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #333; }
+    .transaction-info p { margin: 8px 0; }
+    .transaction-info strong { display: inline-block; width: 150px; color: #555; }
+    button { padding: 10px 20px; margin-top: 20px; cursor: pointer; border: none; border-radius: 8px; background: #007bff; color: #fff; font-size: 14px; }
+    button:hover { background: #005eb8; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Income Transaction</h1>
+  <div class="transaction-info">
+    <p><strong>Transaction ID:</strong> <span id="r-id"></span></p>
+    <p><strong>Reference Number:</strong> <span id="r-ref"></span></p>
+    <p><strong>Date:</strong> <span id="r-date"></span></p>
+    <p><strong>Time:</strong> <span id="r-time"></span></p>
+    <p><strong>Amount:</strong> <span id="r-amount"></span></p>
+    <p><strong>Recipient:</strong> <span id="r-recipient"></span></p>
+    <p><strong>Sender:</strong> <span id="r-sender"></span></p>
+    <p><strong>Status:</strong> <span id="r-status"></span></p>
+  </div>
+  <button id="download-receipt">Download PDF</button>
+</div>
+
+<!-- jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="hardcoded-income.js"></script>
+</body>
+</html>
