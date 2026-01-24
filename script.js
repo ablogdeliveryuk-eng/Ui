@@ -115,7 +115,7 @@ const checkingBalanceEl = $("checking-balance");
 const investmentBalanceEl = $("investment-balance");
 
 // Load accounts
-lt accounts;
+let accounts;
 try {
   accounts = JSON.parse(localStorage.getItem("accounts"));
 } catch {
