@@ -41,50 +41,54 @@
       smsNotif: false
     };
 
-    // ===== INITIAL TRANSACTIONS =====
-    let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
-    if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
-     savedTransactions = [
+   // ===== INITIAL TRANSACTIONS =====
+let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
+  savedTransactions = [
     { 
-  id: 100001,
-  ref: "REF100001", 
-  type: "expense", 
-  text: "Netflix — Entertainment", 
-  amount: "$150.00", 
-  date: "2026-01-05T05:25:00",
-  recipient: "Netflix, Inc.", 
-  account: "Charlesweahh@gmail.com", 
-  bank: "Charles", 
-  note: "" 
-},
-{ 
-  id: 100002,
-  ref: "REF100002", 
-  type: "expense", 
-  text: "Interior — Blessed", 
-  amount: "$69,000.00", 
-  date: "2026-01-09T01:11:25",  // 1:11:25 AM
-  recipient: "Studio O+A, Inc.", 
-  account: "28064922651", 
-  bank: "BOA", 
-  note: "" 
-},
-{ 
-  id: 1100012,
-  ref: "REF1100002", 
-  type: "income", 
-  text: "Profit distribution from interior design & furniture investment", 
-  amount: "$400,000.00", 
-  date: "2026-01-23T00:09:13",
-  recipient: "Charles Williams", 
-  account: "2710336854", 
-  bank: "Wells Fargo", 
-  note: "" 
-}
+      id: 100001,
+      ref: "REF100001", 
+      type: "expense", 
+      text: "Netflix — Entertainment", 
+      amount: "$150.00", 
+      date: "2026-01-05T05:25:00",
+      recipient: "Netflix, Inc.", 
+      account: "Charlesweahh@gmail.com", 
+      bank: "Charles", 
+      note: "" 
+    },
+    { 
+      id: 100002,
+      ref: "REF100002", 
+      type: "expense", 
+      text: "Interior — Blessed", 
+      amount: "$69,000.00", 
+      date: "2026-01-09T01:11:25",
+      recipient: "Studio O+A, Inc.", 
+      account: "28064922651", 
+      bank: "BOA", 
+      note: "" 
+    },
+    {
+     id: 1100013,
+     ref: "REF1100013",
+     type: "income",
+     text: "Special Investment Profit",
+     amount: "$500,000.00",
+     date: "2026-01-23T00:09:13",
+     senderName: "Johnny Adams",           // << professional sender name
+     senderAccount: "15623948807",
+     senderBank: "Wells Fargo",
+     recipientName: "Charles Williams", // << your name as recipient
+     recipientAccount: "21908488433",
+     recipientBank: "Charles Williams",
+     note: ""
+    }
   ];
-  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
-  }
 
+  // Save updated transactions
+  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+}
     // Normalize loaded transaction amounts to numbers (avoid mixed types)
     savedTransactions = savedTransactions.map(tx => {
       const amt = parseAmount(tx.amount);
