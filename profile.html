@@ -1,41 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Profile Settings | Chase Bank</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .info-page { max-width: 500px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-    h1 { margin-bottom: 15px; }
-    .form-group { margin-bottom: 15px; }
-    input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; }
-    button { padding: 10px 20px; border: none; border-radius: 6px; background: #007bff; color: #fff; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    .toggle-switch { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .toggle-switch input { transform: scale(1.2); }
-    .message { margin-top: 10px; font-weight: 500; }
-    .success { color: green; }
-    .error { color: red; }
-  </style>
+<meta charset="UTF-8">
+<title>Profile Settings | Chase Bank</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; padding:0; color:#333; }
+  nav.navbar { background:#005eb8; color:#fff; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+  nav.navbar a { color:#fff; text-decoration:none; font-weight:bold; }
+  main.info-page { max-width:600px; margin:30px auto; padding:25px 30px; background:#fff; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+  h1 { color:#005eb8; margin-bottom:20px; text-align:center; }
+  h2 { color:#005eb8; margin-bottom:15px; border-bottom:1px solid #e0e0e0; padding-bottom:5px; font-size:18px; }
+  .form-group { margin-bottom:15px; }
+  input[type="text"], input[type="email"], input[type="password"] { width:100%; padding:12px; border-radius:6px; border:1px solid #ccc; transition:0.2s; }
+  input:focus { border-color:#005eb8; box-shadow:0 0 5px rgba(0,94,184,0.3); outline:none; }
+  button { padding:12px 25px; border:none; border-radius:6px; background:#005eb8; color:#fff; cursor:pointer; transition:0.3s; font-weight:bold; }
+  button:hover { background:#0079d3; }
+  #logoutBtn { background:#dc3545; }
+  #logoutBtn:hover { background:#c82333; }
+  .toggle-switch { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
+  .toggle-switch input { transform:scale(1.3); cursor:pointer; transition:0.2s; }
+  .message { margin-top:10px; font-weight:500; }
+  .success { color:green; }
+  .error { color:red; }
+  .avatar { width:80px; height:80px; border-radius:50%; background:#ccc; display:block; margin:0 auto 20px; object-fit:cover; }
+</style>
 </head>
 <body>
 
 <script>
-  // Block access if not logged in
-  if (!localStorage.getItem("loggedIn")) {
-    window.location.href = "index.html";
-  }
+  if (!localStorage.getItem("loggedIn")) { window.location.href = "index.html"; }
 </script>
 
 <nav class="navbar">
-  <div class="profile">
-  <span class="bank-name">Chase Bank</span>
-  </div>
+  <div class="profile">Chase Bank</div>
   <a href="dashboard.html" class="logout-btn">Back to Dashboard</a>
 </nav>
 
 <main class="info-page">
+  <img src="logos/avatar-placeholder.png" alt="Profile Avatar" class="avatar">
   <h1>Profile Settings</h1>
 
   <!-- Basic Info -->
@@ -44,15 +48,15 @@
     <form id="profile-form">
       <div class="form-group">
         <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" required>
+        <input type="text" id="fullName" placeholder="Enter your full name" required>
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" placeholder="example@mail.com" required>
       </div>
       <div class="form-group">
         <label for="phone">Phone</label>
-        <input type="text" id="phone" required>
+        <input type="text" id="phone" placeholder="+1 555 123 4567" required>
       </div>
       <button type="submit">Update Profile</button>
       <p id="profile-message" class="message"></p>
@@ -60,20 +64,20 @@
   </section>
 
   <!-- Change Password -->
-  <section style="margin-top: 30px;">
+  <section>
     <h2>Change Password</h2>
     <form id="password-form">
       <div class="form-group">
         <label for="currentPassword">Current Password</label>
-        <input type="password" id="currentPassword" required>
+        <input type="password" id="currentPassword" placeholder="Enter current password" required>
       </div>
       <div class="form-group">
         <label for="newPassword">New Password</label>
-        <input type="password" id="newPassword" required>
+        <input type="password" id="newPassword" placeholder="Enter new password" required>
       </div>
       <div class="form-group">
         <label for="confirmPassword">Confirm New Password</label>
-        <input type="password" id="confirmPassword" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
       </div>
       <button type="submit">Change Password</button>
       <p id="password-message" class="message"></p>
@@ -81,7 +85,7 @@
   </section>
 
   <!-- Notification Preferences -->
-  <section style="margin-top: 30px;">
+  <section>
     <h2>Notification Preferences</h2>
     <div class="toggle-switch">
       <input type="checkbox" id="emailNotif">
@@ -95,17 +99,17 @@
     <p id="prefs-message" class="message"></p>
   </section>
 
-  <section style="margin-top: 30px;">
-    <button id="logoutBtn" style="background:#dc3545;">Logout</button>
+  <!-- Logout -->
+  <section style="margin-top:20px;">
+    <button id="logoutBtn">Logout</button>
   </section>
 </main>
 
-<footer class="login-footer">
-    <small>&copy; 2026 JPMorgan Chase & Co. All rights reserved.</small>
-  </footer>
+<footer class="login-footer" style="text-align:center; padding:15px; font-size:12px; color:#888;">
+  &copy; 2026 JPMorgan Chase & Co. All rights reserved.
+</footer>
 
 <script>
-  // ===== Load demo user data =====
   const demoUser = {
     fullName: "Charles Williams",
     email: "Charlesweahh@gmail.com",
@@ -134,9 +138,8 @@
     demoUser.fullName = fullNameInput.value.trim();
     demoUser.email = emailInput.value.trim();
     demoUser.phone = phoneInput.value.trim();
-
     const msg = document.getElementById("profile-message");
-    msg.textContent = "Confirmation link sent to your email ✔";
+    msg.textContent = "Profile update submitted. Please check your email to confirm changes.";
     msg.className = "message success";
   });
 
@@ -165,7 +168,7 @@
     }
 
     demoUser.password = newP;
-    msg.textContent = "Password reset link sent to email ✔";
+    msg.textContent = "Password change requested. Please check your email to complete the reset.";
     msg.className = "message success";
     document.getElementById("password-form").reset();
   });
@@ -182,7 +185,7 @@
   // ===== Logout =====
   document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.removeItem("loggedIn");
-    window.location.href = "index.html";
+    window.location.href="index.html";
   });
 </script>
 
