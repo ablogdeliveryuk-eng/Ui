@@ -437,20 +437,35 @@ updateBalancesUI();
   const rname = $("r-name");
 
   // ===== NEW CORRECT LOGIC =====
-  if (tx.type === "income" && tx.senderName && tx.senderBank) {
-    // Incoming money: sender → recipient
-    if (rrecipient) rrecipient.textContent = `${tx.senderName} — ${tx.senderAccount || "[Account]"} (${tx.senderBank}) → ${tx.recipient} (${tx.account || "[Account]"})`;
-    if (rname) rname.textContent = tx.recipient || "[Name]";
-  } else if (tx.type === "expense") {
-    // Outgoing money: your account → recipient
-    if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
-    if (rname) rname.textContent = tx.recipient || "[Name]";
-  } else {
-    // fallback: show recipient only
-    if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
-    if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
-  }
+  if (tx.type === "income") {
+  // Incoming money: someone sent money to YOU
+  if (rrecipient)
+    rrecipient.textContent =
+      `${tx.recipient || "[You]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
 
+  if (rname)
+    rname.textContent = tx.recipient || "[You]";
+
+}
+else if (tx.type === "expense") {
+  // Outgoing money: YOU sent money
+  if (rrecipient)
+    rrecipient.textContent =
+      `${tx.recipient || "[Recipient]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+
+  if (rname)
+    rname.textContent = tx.recipient || "[Recipient]";
+
+}
+else {
+  // fallback ONLY if type is unknown
+  if (rrecipient)
+    rrecipient.textContent = tx.recipient || tx.text || "[Name]";
+
+  if (rname)
+    rname.textContent = tx.recipient || tx.text || "[Name]";
+}
+      
   // ===== ACCOUNT INFORMATION FIELD =====
   const fromAccountEl = $("r-from-account"); // create this span in your modal
   const toAccountEl = $("r-to-account");     // create this span in your modal
