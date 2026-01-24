@@ -37,18 +37,22 @@ function getFromToAccounts(tx) {
   const yourAccountNumber = "****8433";
 
   if (tx.amount.startsWith("+")) {
+    // INCOME: From sender → To your account
     return {
       fromName: tx.recipientName,
       fromAccount: tx.recipientAccount,
       toName: "Your Account",
-      toAccount: `${yourAccountName} (${yourAccountNumber})`
+      toAccount: `${yourAccountName} (${yourAccountNumber})`,
+      toBank: yourAccountName // <--- corrected recipient bank
     };
   } else {
+    // EXPENSE: From your account → To recipient
     return {
       fromName: "Your Account",
       fromAccount: `${yourAccountName} (${yourAccountNumber})`,
       toName: tx.recipientName,
-      toAccount: tx.recipientAccount
+      toAccount: tx.recipientAccount,
+      toBank: tx.recipientBank
     };
   }
 }
@@ -106,7 +110,7 @@ function handleViewReceiptClicks() {
           <h3>Account Information</h3>
           <p><strong>From Account:</strong> ${accounts.fromName} (${accounts.fromAccount})</p>
           <p><strong>To Account:</strong> ${accounts.toName} (${accounts.toAccount})</p>
-          <p><strong>Recipient Bank:</strong> ${tx.recipientBank}</p>
+          <p><strong>Recipient Bank:</strong> ${accounts.toBank || tx.recipientBank}</p>
 
           <hr>
 
@@ -180,7 +184,7 @@ function handleViewReceiptClicks() {
         doc.setFontSize(12);
         doc.text(`From Account: ${accounts.fromName} (${accounts.fromAccount})`, 20, y); y+=8;
         doc.text(`To Account: ${accounts.toName} (${accounts.toAccount})`, 20, y); y+=8;
-        doc.text(`Recipient Bank: ${tx.recipientBank}`, 20, y); y+=12;
+        doc.text(`Recipient Bank: ${accounts.toBank || tx.recipientBank}`, 20, y); y+=12;
 
         doc.setFontSize(14); doc.text("Authorization Statement", 20, y); y+=8;
         doc.setFontSize(12);
