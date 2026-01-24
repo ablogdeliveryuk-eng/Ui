@@ -763,18 +763,18 @@ updateBalancesUI();
                 const { recipient, amount } = details;
                 // Request: create pending income transaction but DO NOT change balance yet
                 const txObj = {
-                  id: Math.floor(Math.random() * 1000000),
-                  ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
-                  type: "income",
-                  text: `Request from ${recipient}`,
-                  amount: amount,
-                  date: new Date().toISOString(),
-                  status: "pending",
-                  recipient: recipient,
-                  account: details.account || "",
-                  bank: details.bank || "",
-                  note: details.note || ""
-                };
+                id: details.id || Date.now(),  // unique, deterministic
+                ref: details.ref || `REF${Date.now()}`,  // deterministic reference
+                type: "income",
+                text: `Request from ${recipient}`,
+                amount: amount,
+                date: new Date().toISOString(),
+                status: "pending",
+                recipient: recipient,
+                account: details.account || "",
+                bank: details.bank || "",
+                note: details.note || ""
+              };
                 savedTransactions.unshift(txObj);
                 saveTransactionsAndBalance();
                 renderTransactions();
