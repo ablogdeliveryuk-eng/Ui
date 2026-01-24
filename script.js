@@ -68,8 +68,24 @@
   account: "28064922651", 
   bank: "BOA", 
   note: "" 
-}
-  ];
+},
+{ 
+  id: 100811,
+  ref: "REF2026023",
+  type: "income",
+  text: "Profit distribution from interior design & furniture investment",
+  amount: "$500,000.00",
+  date: "2026-01-23T10:30:00",
+  status: "completed",
+  recipient: "Charles Williams",
+  account: "21908488433",
+  bank: "JP Morgan Chase Bank",
+  senderName: "Johnny Adams",
+  senderAccount: "15623948807",
+  senderBank: "Wells Fargo",
+  note: ""
+  }
+];
   localStorage.setItem("transactions", JSON.stringify(savedTransactions));
   }
 
@@ -423,13 +439,19 @@ updateBalancesUI();
 
       const rrecipient = $("r-recipient");
       const rname = $("r-name");
-      if (tx.account || tx.bank) {
-        if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
-        if (rname) rname.textContent = tx.recipient || "[Name]";
-      } else {
-        if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
-        if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
-      }
+
+      if (tx.type === "income" && tx.senderName && tx.senderBank) {
+      // For income transactions, show sender → recipient
+      if (rrecipient) rrecipient.textContent = `${tx.senderName} — ${tx.senderAccount || "[Account]"} (${tx.senderBank}) → ${tx.recipient} (${tx.account || "[Account]"})`;
+      if (rname) rname.textContent = tx.recipient || "[Name]";
+     } else if (tx.account || tx.bank) {
+      // For normal transactions
+      if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+      if (rname) rname.textContent = tx.recipient || "[Name]";
+    } else {
+      if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
+      if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
+    }
 
       const modalHeading = successModal.querySelector("h2");
       if (modalHeading) {
