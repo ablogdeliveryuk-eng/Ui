@@ -92,11 +92,6 @@ if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
 // Save to localStorage
 localStorage.setItem("transactions", JSON.stringify(savedTransactions));
 }
-
-// Update UI and balances
-renderTransactions();
-updateBalancesUI();
-showTransactionReceipt(incomeTransaction);
     
     // Normalize loaded transaction amounts to numbers (avoid mixed types)
     savedTransactions = savedTransactions.map(tx => {
