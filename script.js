@@ -413,54 +413,66 @@ updateBalancesUI();
     }
 
     function showTransactionReceipt(tx) {
-      const successModal = $("success-modal");
-      if (!successModal || !tx) return;
+  const successModal = $("success-modal");
+  if (!successModal || !tx) return;
 
-      // Show modal with proper styling
-      successModal.style.display = "flex";
-      successModal.style.position = "fixed";
-      successModal.style.top = "50%";
-      successModal.style.left = "50%";
-      successModal.style.transform = "translate(-50%, -50%)";
-      successModal.style.zIndex = 2000;
+  // Show modal
+  successModal.style.display = "flex";
+  successModal.style.position = "fixed";
+  successModal.style.top = "50%";
+  successModal.style.left = "50%";
+  successModal.style.transform = "translate(-50%, -50%)";
+  successModal.style.zIndex = 2000;
 
-      // Fill modal with transaction info (guard each element)
-      const rid = $("r-id"); 
-      if (rid) rid.textContent = tx.id ?? Math.floor(Math.random() * 1000000);
+  // Fill modal fields safely
+  const rid = $("r-id"); if (rid) rid.textContent = tx.id ?? Math.floor(Math.random() * 1000000);
+  const rref = $("r-ref"); if (rref) rref.textContent = tx.ref ?? "REF" + Math.floor(100000000 + Math.random() * 900000000);
+  const now = new Date(tx.date ? tx.date : Date.now());
+  const rdate = $("r-date"); if (rdate) rdate.textContent = now.toLocaleDateString();
+  const rtime = $("r-time"); if (rtime) rtime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+  const ramount = $("r-amount"); if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
+  const rfee = $("r-fee"); if (rfee) rfee.textContent = "0.00";
 
-      const rref = $("r-ref"); 
-      if (rref) rref.textContent = tx.ref ?? "REF" + Math.floor(100000000 + Math.random() * 900000000);
-      const now = new Date(tx.date ? tx.date : Date.now());
-      const rdate = $("r-date"); if (rdate) rdate.textContent = now.toLocaleDateString();
-      const rtime = $("r-time"); if (rtime) rtime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+  const rrecipient = $("r-recipient");
+  const rname = $("r-name");
 
-      const ramount = $("r-amount"); if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
-      const rfee = $("r-fee"); if (rfee) rfee.textContent = "0.00";
+  // ===== NEW CORRECT LOGIC =====
+  if (tx.type === "income" && tx.senderName && tx.senderBank) {
+    // Incoming money: sender → recipient
+    if (rrecipient) rrecipient.textContent = `${tx.senderName} — ${tx.senderAccount || "[Account]"} (${tx.senderBank}) → ${tx.recipient} (${tx.account || "[Account]"})`;
+    if (rname) rname.textContent = tx.recipient || "[Name]";
+  } else if (tx.type === "expense") {
+    // Outgoing money: your account → recipient
+    if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+    if (rname) rname.textContent = tx.recipient || "[Name]";
+  } else {
+    // fallback: show recipient only
+    if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
+    if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
+  }
 
-      const rrecipient = $("r-recipient");
-      const rname = $("r-name");
-
-      if (tx.type === "income" && tx.senderName && tx.senderBank) {
-      // For income transactions, show sender → recipient
-      if (rrecipient) rrecipient.textContent = `${tx.senderName} — ${tx.senderAccount || "[Account]"} (${tx.senderBank}) → ${tx.recipient} (${tx.account || "[Account]"})`;
-      if (rname) rname.textContent = tx.recipient || "[Name]";
-     } else if (tx.account || tx.bank) {
-      // For normal transactions
-      if (rrecipient) rrecipient.textContent = `${tx.recipient || "[Name]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
-      if (rname) rname.textContent = tx.recipient || "[Name]";
+  // ===== ACCOUNT INFORMATION FIELD =====
+  const fromAccountEl = $("r-from-account"); // create this span in your modal
+  const toAccountEl = $("r-to-account");     // create this span in your modal
+  if (fromAccountEl && toAccountEl) {
+    if (tx.type === "income") {
+      fromAccountEl.textContent = `${tx.senderName || "[Sender]"} — ${tx.senderAccount || "[Account]"} (${tx.senderBank || "[Bank]"})`;
+      toAccountEl.textContent = `${tx.recipient || "[You]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
     } else {
-      if (rrecipient) rrecipient.textContent = tx.recipient || tx.text || "[Name]";
-      if (rname) rname.textContent = tx.recipient || tx.text || "[Name]";
+      fromAccountEl.textContent = `${tx.recipient || "[You]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
+      toAccountEl.textContent = `${tx.recipient || "[Recipient]"} — ${tx.account || "[Account]"} (${tx.bank || "[Bank]"})`;
     }
+  }
 
-      const modalHeading = successModal.querySelector("h2");
-      if (modalHeading) {
-        modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
-      }
+  // Modal heading
+  const modalHeading = successModal.querySelector("h2");
+  if (modalHeading) {
+    modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
+  }
 
-      // Save globally for download (demo convenience)
-      window.lastTransactionDetails = tx;
-    }
+  // Save last transaction for download
+  window.lastTransactionDetails = tx;
+                                                                              }
 
     // Get confirm modal elements (may be missing in some pages)
     const confirmModal = $("confirm-modal");
