@@ -23,7 +23,8 @@ const historyData = [
   { date: "2025-11-30", time: "08:50:40", desc: "Grocery Store", amount: "-$15,000", status: "Completed", recipientName: "Grocery Mart", recipientAccount: "****8799", recipientBank: "Bank Of America", transactionID: "TX-100019", referenceNumber: "REF-500019" },
   { date: "2025-12-02", time: "10:30:20", desc: "Charity Donation", amount: "-$20,000", status: "Completed", recipientName: "Helping Hands", recipientAccount: "****0874", recipientBank: "Citi Bank", transactionID: "TX-100020", referenceNumber: "REF-500020" },
   { date: "2026-01-05", time: "05:25:00", desc: "Netflix — Entertainment", amount: "-$150,00", status: "Completed", recipientName: "Netflix, Inc.", recipientAccount: "Charlesweahh@gmail.com", recipientBank: "Bank Of America", transactionID: "100001", referenceNumber: "REF100001" },
-  { date: "2026-01-09", time: "01:11:25", desc: "Interior — Blessed", amount: "-$69,000", status: "Completed", recipientName: "Studio O+A, Inc.", recipientAccount: "****2651", recipientBank: "Bank Of America", transactionID: "100002", referenceNumber: "REF100002" }
+  { date: "2026-01-09", time: "01:11:25", desc: "Interior — Blessed", amount: "-$69,000", status: "Completed", recipientName: "Studio O+A, Inc.", recipientAccount: "****2651", recipientBank: "Bank Of America", transactionID: "100002", referenceNumber: "REF100002" },
+  { date: "2026-01-23", time: "10:30:00", desc: "Profit distribution from interior design & furniture investment", amount: "+$500,000", status: "Completed", recipientName: "Charles Williams", recipientAccount: "****8433", recipientBank: "Chase Bank", transactionID: "100811", referenceNumber: "REF2026023" }
 ];
 
 // ---------------------------
