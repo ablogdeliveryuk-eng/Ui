@@ -954,14 +954,24 @@ updateBalancesUI();
         doc.text(`Payment Amount: ${amount}`, 20, y); y += 8;
         doc.text(`Transaction Fee: ${fee}`, 20, y); y += 8;
 
-        // Account Info
-        doc.setFontSize(14); doc.text("Account Information", 20, y); y += 8;
-        doc.setFontSize(12);
-        doc.text("From Account: JPMorgan Chase Bank, N.A. (****8433)", 20, y); y += 8;
-        doc.text("SWIFT / BIC: CHASUS33", 20, y); y += 8;
+         // Account Info
+         doc.setFontSize(14); 
+         doc.text("Account Information", 20, y); 
+         y += 8;
 
-        doc.text(`To Account: ${recipient}`, 20, y);
-        y += 12;
+         doc.setFontSize(12);
+
+         // Use dynamic sender info from details
+         doc.text(`From Account: ${details.senderName || "Sender Name"} — ${details.senderAccount || "XXXXXXX"} (${details.senderBank || "Bank Name"})`, 20, y); 
+         y += 8;
+
+         // Optional: add SWIFT/BIC dynamically if you have it in details
+         doc.text(`SWIFT / BIC: ${details.senderBIC || "N/A"}`, 20, y); 
+         y += 8;
+
+        // Recipient info
+        doc.text(`To Account: ${details.recipient || "Recipient Name"} — ${details.account || "XXXXXXX"} (${details.bank || "Bank Name"})`, 20, y); 
+         y += 12;
 
         // Authorization Statement
         doc.setFontSize(14); doc.text("Authorization Statement", 20, y); y += 8;
