@@ -954,4 +954,105 @@ updateBalancesUI();
 
         // Transaction Status
         doc.setFontSize(12);
-        doc.text(`Transaction Status: ${details.status || "
+        doc.text(`Transaction Status: ${details.status || "Completed / Successful"}`, 20, y); y += 12;
+
+        // Footer
+        doc.setLineWidth(0.5);
+        doc.line(20, y, 190, y); y += 6;
+        doc.setFontSize(10);
+        doc.text("This receipt was generated electronically.", 105, y, { align: "center" });
+
+        // Save PDF
+        doc.save(`${id || "receipt"}.pdf`);
+      });
+    }
+
+  // ===== QUICK ACTION CARDS =====
+    const quickButtons = document.querySelectorAll(".quick-btn");
+    quickButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.action;
+        const payCard = document.querySelector(".pay-bill-card");
+        const sendCard = document.querySelector(".send-money-card");
+        const requestCard = document.querySelector(".request-money-card");
+
+        if (action === "pay-bill") {
+          if (payCard) payCard.style.display = payCard.style.display === "block" ? "none" : "block";
+          if (payCard && payCard.style.display === "block") payCard.scrollIntoView({behavior:"smooth",block:"start"});
+          if (sendCard) sendCard.style.display = "none";
+          if (requestCard) requestCard.style.display = "none";
+        }
+        if (action === "send-money") {
+          if (sendCard) sendCard.style.display = sendCard.style.display === "block" ? "none" : "block";
+          if (sendCard && sendCard.style.display === "block") sendCard.scrollIntoView({behavior:"smooth",block:"start"});
+          if (payCard) payCard.style.display = "none";
+          if (requestCard) requestCard.style.display = "none";
+        }
+        if (action === "request-money") {
+          if (requestCard) requestCard.style.display = requestCard.style.display === "block" ? "none" : "block";
+          if (requestCard && requestCard.style.display === "block") requestCard.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (sendCard) sendCard.style.display = "none";
+          if (payCard) payCard.style.display = "none";
+        }
+      });
+    });
+
+    // ===== PASSWORD CHANGE FORM =====
+    const passwordForm = $("password-form");
+    if (passwordForm) {
+      const passwordMessage = $("password-message");
+      passwordForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const current = $("currentPassword") ? $("currentPassword").value : "";
+        const newP = $("newPassword") ? $("newPassword").value : "";
+        const confirmP = $("confirmPassword") ? $("confirmPassword").value : "";
+
+        if (current !== demoUser.password) {
+          if (passwordMessage) { passwordMessage.textContent = "Current password is incorrect!"; passwordMessage.classList.remove("success"); passwordMessage.classList.add("error"); }
+          return;
+        }
+
+        if (newP.length < 6) {
+          if (passwordMessage) { passwordMessage.textContent = "New password must be at least 6 characters!"; passwordMessage.classList.remove("success"); passwordMessage.classList.add("error"); }
+          return;
+        }
+
+        if (newP !== confirmP) {
+          if (passwordMessage) { passwordMessage.textContent = "New passwords do not match!"; passwordMessage.classList.remove("success"); passwordMessage.classList.add("error"); }
+          return;
+        }
+
+        // Update in-memory demo credential only (do not persist secrets)
+        demoUser.password = newP;
+        if (passwordMessage) { passwordMessage.textContent = "Password successfully updated ✔"; passwordMessage.classList.remove("error"); passwordMessage.classList.add("success"); }
+        passwordForm.reset();
+      });
+    }
+
+    // ===== PROFILE PANEL =====
+    const profileBtn = $("profile-btn");
+    const profilePanel = $("profile-panel");
+    const closeProfileBtn = $("close-profile");
+    const editProfileBtn = $("edit-profile");
+    const accountSettingsBtn = $("account-settings");
+
+    if (profileBtn && profilePanel) {
+      profileBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
+      });
+    }
+
+    if (closeProfileBtn) closeProfileBtn.addEventListener("click", () => { if (profilePanel) profilePanel.style.display = "none"; });
+
+    document.addEventListener("click", e => {
+      if (profilePanel && profilePanel.style.display === "block" && !profilePanel.contains(e.target) && profileBtn && !profileBtn.contains(e.target)) {
+        profilePanel.style.display = "none";
+      }
+    });
+
+    if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
+    if (accountSettingsBtn) accountSettingsBtn.addEventListener("click", () => window.location.href = "account.html");
+    
+  });
+})();
