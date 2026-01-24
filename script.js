@@ -756,18 +756,21 @@ updateBalancesUI();
                 const { recipient, amount } = details;
                 // Request: create pending income transaction but DO NOT change balance yet
                 const txObj = {
-                  id: Math.floor(Math.random() * 1000000),
-                  ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
-                  type: "income",
-                  text: `Request from ${recipient}`,
-                  amount: amount,
-                  date: new Date().toISOString(),
-                  status: "pending",
-                  recipient: recipient,
-                  account: details.account || "",
-                  bank: details.bank || "",
-                  note: details.note || ""
-                };
+                id: Math.floor(Math.random() * 1000000),
+                ref: "REF" + Math.floor(100000000 + Math.random() * 900000000),
+                type: "income",
+                text: `Request from ${recipient}`,
+                amount: amount,
+                date: new Date().toISOString(),
+                status: "pending",
+                recipient: recipient,
+
+                // ✅ FIX HERE
+                account: "External Account",
+                bank: details.bank || "External Bank",
+
+                note: details.note || ""
+              };
                 savedTransactions.unshift(txObj);
                 saveTransactionsAndBalance();
                 renderTransactions();
@@ -955,8 +958,13 @@ updateBalancesUI();
         doc.text("SWIFT / BIC: CHASUS33", 20, y); y += 8;
 
         if (details.type === "income") {
-        doc.text(`From Account: ${details.recipient || "External Bank"} → Your Account`, 20, y);
-       } else {
+        doc.text(
+        `From Account: ${details.bank || "External Bank"} → Your Account`,
+        20,
+        y
+       );
+      }
+        else {
         doc.text(`To Account: ${recipient}`, 20, y);
        }
         y += 12;
