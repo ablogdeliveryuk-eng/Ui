@@ -32,6 +32,15 @@
   .linked-card-info p { margin:0; font-size:14px; color:#555; }
   .remove-btn { position:absolute; top:10px; right:10px; border:none; background:#e74c3c; color:#fff; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:12px; }
   .remove-btn:hover { background:#c0392b; }
+
+  /* ===== Modal ===== */
+  .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000; }
+  .modal { background:#fff; padding:20px; border-radius:12px; max-width:350px; width:90%; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+  .modal h3 { margin-top:0; color:#333; }
+  .modal p { font-size:14px; color:#555; margin:15px 0; }
+  .modal button { margin:0 10px; }
+  .modal button.cancel { background:#888; }
+  .modal button.cancel:hover { background:#555; }
 </style>
 </head>
 <body>
@@ -104,6 +113,16 @@
   <small>&copy; 2026 JPMorgan Chase & Co. All rights reserved.</small>
 </footer>
 
+<!-- ===== REMOVE ACCOUNT MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Remove Linked Account</h3>
+    <p>Are you sure you want to remove this linked account? This action cannot be undone.</p>
+    <button id="confirmRemove">Yes, Remove</button>
+    <button class="cancel" id="cancelRemove">No, Cancel</button>
+  </div>
+</div>
+
 <script>
   // ===== DEFAULT DATA =====
   const defaultAccount = {
@@ -159,6 +178,11 @@
   const linkedMessage = document.getElementById("linkedMessage");
   const addAccountBtn = document.getElementById("addAccountBtn");
 
+  let removeIndex = null; // track which account to remove
+  const modalOverlay = document.getElementById("modalOverlay");
+  const confirmRemove = document.getElementById("confirmRemove");
+  const cancelRemove = document.getElementById("cancelRemove");
+
   function renderLinkedAccounts() {
     linkedList.innerHTML = "";
     accountData.linkedAccounts.forEach((acc, i) => {
@@ -193,16 +217,27 @@
 
   linkedList.onclick = e => {
     if (e.target.classList.contains("remove-btn")) {
-      const idx = e.target.dataset.index;
-      const confirmed = confirm("Are you sure you want to remove this linked account? This action cannot be undone.");
-      if (!confirmed) return;
-      accountData.linkedAccounts.splice(idx, 1);
+      removeIndex = e.target.dataset.index;
+      modalOverlay.style.display = "flex"; // show modal
+    }
+  };
+
+  confirmRemove.onclick = () => {
+    if (removeIndex !== null) {
+      accountData.linkedAccounts.splice(removeIndex, 1);
       localStorage.setItem("accountData", JSON.stringify(accountData));
       renderLinkedAccounts();
       linkedMessage.textContent = "Linked account removed ✔";
       linkedMessage.className = "message success";
       setTimeout(()=>{ linkedMessage.textContent = ""; },3000);
+      removeIndex = null;
+      modalOverlay.style.display = "none";
     }
+  };
+
+  cancelRemove.onclick = () => {
+    removeIndex = null;
+    modalOverlay.style.display = "none";
   };
 
   // ===== ALERTS =====
