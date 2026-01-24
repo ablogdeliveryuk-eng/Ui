@@ -42,34 +42,40 @@
     };
 
     // ===== INITIAL TRANSACTIONS =====
-    let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
-    if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
-     savedTransactions = [
+let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+
+// Only add this default if there are no transactions at all
+if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
+  savedTransactions = [
     { 
-  id: 100001,
-  ref: "REF100001", 
-  type: "expense", 
-  text: "Netflix — Entertainment", 
-  amount: "$150.00", 
-  date: "2026-01-05T05:25:00",
-  recipient: "Netflix, Inc.", 
-  account: "Charlesweahh@gmail.com", 
-  bank: "Charles", 
-  note: "" 
-},
-{ 
-  id: 100002,
-  ref: "REF100002", 
-  type: "expense", 
-  text: "Interior — Blessed", 
-  amount: "$69,000.00", 
-  date: "2026-01-09T01:11:25",  // 1:11:25 AM
-  recipient: "Studio O+A, Inc.", 
-  account: "28064922651", 
-  bank: "BOA", 
-  note: "" 
-},
-{ 
+      id: 100001,
+      ref: "REF100001", 
+      type: "expense", 
+      text: "Netflix — Entertainment", 
+      amount: "$150.00", 
+      date: "2026-01-05T05:25:00",
+      recipient: "Netflix, Inc.", 
+      account: "Charlesweahh@gmail.com", 
+      bank: "Charles", 
+      note: "" 
+    },
+    { 
+      id: 100002,
+      ref: "REF100002", 
+      type: "expense", 
+      text: "Interior — Blessed", 
+      amount: "$69,000.00", 
+      date: "2026-01-09T01:11:25",
+      recipient: "Studio O+A, Inc.", 
+      account: "28064922651", 
+      bank: "BOA", 
+      note: "" 
+    }
+  ];
+}
+
+// ===== ADD YOUR SINGLE INCOME TRANSACTION =====
+const incomeTransaction = {
   id: 100811,
   ref: "REF2026023",
   type: "income",
@@ -78,16 +84,27 @@
   date: "2026-01-23T10:30:00",
   status: "completed",
   recipient: "Charles Williams",
-  account: "21908488433",
+  account: "21908488433", // Your JP Morgan Chase account
   bank: "JP Morgan Chase Bank",
   senderName: "Johnny Adams",
   senderAccount: "15623948807",
   senderBank: "Wells Fargo",
   note: ""
-  }
-];
-  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
-  }
+};
+
+// Remove any old version of this transaction if it exists
+savedTransactions = savedTransactions.filter(t => t.id !== 100811);
+
+// Add the income transaction
+savedTransactions.push(incomeTransaction);
+
+// Save to localStorage
+localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+
+// Update UI and balances
+renderTransactions();
+updateBalancesUI();
+showTransactionReceipt(incomeTransaction);
 
     // Normalize loaded transaction amounts to numbers (avoid mixed types)
     savedTransactions = savedTransactions.map(tx => {
