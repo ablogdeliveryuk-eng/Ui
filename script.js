@@ -36,7 +36,7 @@
     const demoUser = {
       ...demoProfile,
       password: "1346000",   // demo-only, in-memory
-      transferPin: "1234",   // demo-only, in-memory
+      transferPin: "0027",   // demo-only, in-memory
       emailNotif: true,
       smsNotif: false
     };
