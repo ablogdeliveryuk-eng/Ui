@@ -445,15 +445,7 @@ updateBalancesUI();
       const rrecipient = $("r-recipient");
       const rname = $("r-name");
 
-// ===============================
-// RECEIPT: FROM / TO (FINAL)
-// ===============================
-
-const rsender = $("r-sender");
-const rrecipient = $("r-recipient");
-const rname = $("r-name");
-
-if (tx.type === "income") {
+       if (tx.type === "income") {
 
   // FROM: external sender
   if (rsender) {
@@ -461,7 +453,7 @@ if (tx.type === "income") {
       `${tx.senderName || "N/A"} (****${tx.senderAccount?.slice(-4) || "N/A"})`;
   }
 
-  // TO: your account (JPMorgan)
+  // TO: your account (JP Morgan)
   if (rrecipient) {
     rrecipient.textContent =
       `Your Account — ${tx.bank} (****${tx.account?.slice(-4) || "N/A"})`;
@@ -473,7 +465,7 @@ if (tx.type === "income") {
 
 } else {
 
-  // FROM: your account (JPMorgan)
+  // FROM: your account
   if (rsender) {
     rsender.textContent =
       `Your Account — ${tx.bank} (****${tx.account?.slice(-4) || "N/A"})`;
@@ -489,7 +481,7 @@ if (tx.type === "income") {
     rname.textContent = tx.recipient || "Expense Transaction";
   }
 }
-
+    
       const modalHeading = successModal.querySelector("h2");
       if (modalHeading) {
         modalHeading.textContent = tx.status === "pending" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
