@@ -449,42 +449,24 @@ updateBalancesUI();
   if (ramount) ramount.textContent = formatCurrency(parseAmount(tx.amount) || 0);
   if (rfee) rfee.textContent = "0.00";
 
-  if (tx.type === "income") {
-    // FROM: external sender
-    if (rsender) {
-      const maskedSenderAccount = tx.senderAccount ? "****" + String(tx.senderAccount).slice(-4) : "N/A";
-      rsender.textContent = `${tx.senderBank || "N/A"} — ${tx.senderName || "N/A"} (${maskedSenderAccount})`;
-    }
-
-    // TO: your account
-    if (rrecipient) {
-      const maskedAccount = tx.account ? "****" + String(tx.account).slice(-4) : "N/A";
-      rrecipient.textContent = `Your Account — ${tx.bank || "N/A"} (${maskedAccount})`;
-    }
-
-    if (rname) {
-      rname.textContent = tx.senderName || "Income Transaction";
-    }
-
-  } else {
-    // Expense transaction
-
-    // FROM: your account
-    if (rsender) {
-      const maskedAccount = tx.account ? "****" + String(tx.account).slice(-4) : "N/A";
-      rsender.textContent = `Your Account — ${tx.bank || "N/A"} (${maskedAccount})`;
-    }
-
-    // TO: external recipient
-    if (rrecipient) {
-      const maskedRecipientAccount = tx.recipientAccount ? "****" + String(tx.recipientAccount).slice(-4) : "N/A";
-      rrecipient.textContent = `${tx.recipientBank || "N/A"} — ${tx.recipient || "N/A"} (${maskedRecipientAccount})`;
-    }
-
-    if (rname) {
-      rname.textContent = tx.recipient || "Expense Transaction";
-    }
+   if (tx.type === "income") {
+  // FROM: sender bank (optionally masked account)
+  if (rsender) {
+    const senderBank = tx.senderBank || "N/A";
+    rsender.textContent = senderBank;
   }
+
+  // TO: your account with name, bank, and last 4 digits
+  if (rrecipient) {
+    const maskedAccount = tx.account ? "****" + String(tx.account).slice(-4) : "N/A";
+    rrecipient.textContent = `${demoUser.fullName} — ${tx.bank || "N/A"} (${maskedAccount})`;
+  }
+
+  // Recipient Name: your name
+  if (rname) {
+    rname.textContent = demoUser.fullName;
+  }
+}
 
   const modalHeading = successModal.querySelector("h2");
   if (modalHeading) {
