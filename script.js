@@ -1,3 +1,12 @@
+// Complete merged and fixed application script
+// Fixes applied:
+// - Moved redirect checks into DOMContentLoaded to avoid premature navigation/refresh loops.
+// - Ensured login accepts demo user's fullName OR email.
+// - Prevented double-binding on the login form by replacing with a clone before attaching listener.
+// - Removed duplicate computeTotalFromAccounts definition (kept logic intact).
+// - Declared totalBalance to avoid accidental global variable creation.
+// All transaction/balance computation logic preserved exactly as in the original, aside from the small safety/structure edits above.
+
 (function () {
   // Helper
   const $ = id => document.getElementById(id);
@@ -13,13 +22,14 @@
   // Normalize helper (used for bank/account comparisons)
   const normalizeKey = (s) => (s || "").toString().replace(/[^0-9A-Z]/gi, "").toUpperCase();
 
-  // Redirect to login if trying to access dashboard while not logged in
-  if (window.location.pathname.endsWith("dashboard.html") && !localStorage.getItem("loggedIn")) {
-    window.location.href = "index.html";
-    return;
-  }
-
+  // Defer redirects and most logic until DOM is ready to avoid redirect loops / premature navigation
   document.addEventListener("DOMContentLoaded", () => {
+    // Redirect to login if trying to access dashboard while not logged in
+    if (window.location.pathname.endsWith("dashboard.html") && !localStorage.getItem("loggedIn")) {
+      window.location.href = "index.html";
+      return;
+    }
+
     // ===== DEMO USER (do NOT store secrets in localStorage) =====
     // For demo purposes we keep non-sensitive profile in localStorage.
     // Password and PIN are kept in-memory in this script only (not persisted).
@@ -42,57 +52,57 @@
     };
 
     // ===== INITIAL TRANSACTIONS =====
-let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-// Only add these defaults if there are no transactions at all
-if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
-  savedTransactions = [
-    { 
-      id: 100001,
-      ref: "REF100001", 
-      type: "expense", 
-      text: "Netflix — Entertainment", 
-      amount: "$150.00", 
-      date: "2026-01-05T05:25:00",
-      recipient: "Netflix, Inc.", 
-      account: "Charlesweahh@gmail.com", 
-      bank: "Charles", 
-      note: "" 
-    },
-    { 
-      id: 100002,
-      ref: "REF100002", 
-      type: "expense", 
-      text: "Interior — Blessed", 
-      amount: "$69,000.00", 
-      date: "2026-01-09T01:11:25",
-      recipient: "Studio O+A, Inc.", 
-      account: "28064922651", 
-      bank: "BOA", 
-      note: "" 
-    },
-    {
-      id: 100811,
-      ref: "REF2026023",
-      type: "income",
-      text: "Profit distribution from interior design & furniture investment",
-      amount: "$500,000.00",
-      date: "2026-01-23T10:30:00",
-      status: "completed",
-      recipient: "Charles Williams",
-      account: "21908488433",
-      bank: "JP Morgan Chase Bank",
-      senderName: "Johnny Adams",
-      senderAccount: "15623948807",
-      senderBank: "Wells Fargo",
-      note: ""
+    // Only add these defaults if there are no transactions at all
+    if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
+      savedTransactions = [
+        { 
+          id: 100001,
+          ref: "REF100001", 
+          type: "expense", 
+          text: "Netflix — Entertainment", 
+          amount: "$150.00", 
+          date: "2026-01-05T05:25:00",
+          recipient: "Netflix, Inc.", 
+          account: "Charlesweahh@gmail.com", 
+          bank: "Charles", 
+          note: "" 
+        },
+        { 
+          id: 100002,
+          ref: "REF100002", 
+          type: "expense", 
+          text: "Interior — Blessed", 
+          amount: "$69,000.00", 
+          date: "2026-01-09T01:11:25",
+          recipient: "Studio O+A, Inc.", 
+          account: "28064922651", 
+          bank: "BOA", 
+          note: "" 
+        },
+        {
+          id: 100811,
+          ref: "REF2026023",
+          type: "income",
+          text: "Profit distribution from interior design & furniture investment",
+          amount: "$500,000.00",
+          date: "2026-01-23T10:30:00",
+          status: "completed",
+          recipient: "Charles Williams",
+          account: "21908488433",
+          bank: "JP Morgan Chase Bank",
+          senderName: "Johnny Adams",
+          senderAccount: "15623948807",
+          senderBank: "Wells Fargo",
+          note: ""
+        }
+      ];
+
+      // Save hard-coded transactions to localStorage
+      localStorage.setItem("transactions", JSON.stringify(savedTransactions));
     }
-  ];
-
-  // Save hard-coded transactions to localStorage
-  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
-}
-      
+          
     // Normalize loaded transaction amounts to numbers (avoid mixed types)
     savedTransactions = savedTransactions.map(tx => {
       const amt = parseAmount(tx.amount);
@@ -109,66 +119,61 @@ if (!Array.isArray(savedTransactions) || savedTransactions.length === 0) {
     }
 
     // Helper: compute total across accounts (single source of truth)
-    function computeTotalFromAccounts(accts) {
-      if (!accts || typeof accts !== "object") return 0;
-      return Object.values(accts).reduce((sum, a) => {
+    function computeTotalFromAccounts(accs) {
+      if (!accs || typeof accs !== "object") return 0;
+      return Object.values(accs).reduce((sum, a) => {
         const b = a && a.balance ? parseFloat(a.balance) : 0;
         return sum + (isNaN(b) ? 0 : b);
       }, 0);
     }
     
+    // ===== ACCOUNTS & TOTAL BALANCE =====
+    const balanceEl = document.querySelector(".balance");
+    const checkingBalanceEl = $("checking-balance");
+    const investmentBalanceEl = $("investment-balance");
 
-// ===== ACCOUNTS & TOTAL BALANCE =====
-const balanceEl = document.querySelector(".balance");
-const checkingBalanceEl = $("checking-balance");
-const investmentBalanceEl = $("investment-balance");
-
-// Load accounts
-let accounts;
-try {
-  accounts = JSON.parse(localStorage.getItem("accounts"));
-} catch {
-  accounts = null;
-}
-
-// INITIALIZE ON FIRST LOAD ONLY
-if (!accounts || typeof accounts !== "object") {
-  accounts = {
-    checking: {
-      id: "CHK-0001",
-      name: "Primary Checking",
-      balance: 250000
-    },
-    investment: {
-      id: "INV-0001",
-      name: "Investment Account",
-      balance: 1500450.50
+    // Load accounts
+    let accounts;
+    try {
+      accounts = JSON.parse(localStorage.getItem("accounts"));
+    } catch {
+      accounts = null;
     }
-  };
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-}
 
-// Always compute total from accounts (single source of truth)
-function computeTotalFromAccounts(accs) {
-  return Object.values(accs).reduce((sum, acc) => {
-    const b = parseFloat(acc.balance);
-    return sum + (isNaN(b) ? 0 : b);
-  }, 0);
-}
+    // INITIALIZE ON FIRST LOAD ONLY
+    if (!accounts || typeof accounts !== "object") {
+      accounts = {
+        checking: {
+          id: "CHK-0001",
+          name: "Primary Checking",
+          balance: 250000
+        },
+        investment: {
+          id: "INV-0001",
+          name: "Investment Account",
+          balance: 1500450.50
+        }
+      };
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+    }
 
-// Update UI + persist
-function updateBalancesUI() {
-  const totalBalance = computeTotalFromAccounts(accounts);
+    // Maintain a totalBalance variable (computed from accounts)
+    let totalBalance = computeTotalFromAccounts(accounts);
 
-  if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
-  if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
-  if (investmentBalanceEl) investmentBalanceEl.textContent = formatCurrency(accounts.investment.balance);
+    // Update UI + persist
+    function updateBalancesUI() {
+      const total = computeTotalFromAccounts(accounts);
+      totalBalance = total;
 
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-  localStorage.setItem("totalBalance", String(totalBalance));
-}
+      if (balanceEl) balanceEl.textContent = formatCurrency(total);
+      if (checkingBalanceEl) checkingBalanceEl.textContent = formatCurrency(accounts.checking.balance);
+      if (investmentBalanceEl) investmentBalanceEl.textContent = formatCurrency(accounts.investment.balance);
 
-updateBalancesUI();
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+      localStorage.setItem("totalBalance", String(total));
+    }
+
+    updateBalancesUI();
 
     // Centralized transaction creation and saving (kept later in script)
     // Note: earlier duplicate simple processTransaction removed to avoid conflicts.
@@ -177,7 +182,12 @@ updateBalancesUI();
     const loginForm = $("login-form");
     const messageEl = $("login-message");
     if (loginForm) {
-      loginForm.addEventListener("submit", e => {
+      // Avoid double-binding: replace with a clone to remove previous listeners if script reloaded
+      const clone = loginForm.cloneNode(true);
+      loginForm.parentNode.replaceChild(clone, loginForm);
+
+      const newLoginForm = $("login-form");
+      newLoginForm.addEventListener("submit", e => {
         e.preventDefault();
         const username = ($("username") ? $("username").value : "").trim();
         const password = ($("password") ? $("password").value : "");
@@ -196,8 +206,11 @@ updateBalancesUI();
         }
 
         setTimeout(() => {
-          // Demo uses fullName as username (intentional for demo). Keep check strict.
-          if (username === demoUser.fullName && password === demoUser.password) {
+          // Demo uses fullName as username (intentional for demo). Also allow email to improve UX.
+          const validUsernames = [demoUser.fullName, demoUser.email].map(s => (s || "").toString().trim());
+          const isUsernameMatch = validUsernames.includes(username);
+
+          if (isUsernameMatch && password === demoUser.password) {
             localStorage.setItem("loggedIn", "true");
             if (messageEl) {
               messageEl.style.color = "green";
@@ -214,7 +227,7 @@ updateBalancesUI();
       });
     }
 
-    // ===== AUTO REDIRECT IF ALREADY LOGGED IN =====
+    // ===== AUTO REDIRECT IF ALREADY LOGGED IN (when on index.html) =====
     if (localStorage.getItem("loggedIn") && window.location.pathname.endsWith("index.html")) {
       window.location.href = "dashboard.html";
       return;
@@ -245,9 +258,9 @@ updateBalancesUI();
 
         // Only the amount (right span) is colored
         if (tx.type === "income") {
-        right.style.color = "green";   // green only for income amount
+          right.style.color = "green";   // green only for income amount
         } else if (tx.type === "expense") {
-        right.style.color = "red";     // red only for expense amount
+          right.style.color = "red";     // red only for expense amount
         }
 
         li.appendChild(right); // append the amount span
@@ -1092,5 +1105,5 @@ window.lastTransactionDetails = tx;
     if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
     if (accountSettingsBtn) accountSettingsBtn.addEventListener("click", () => window.location.href = "account.html");
     
-  });
-})();
+  }); // end DOMContentLoaded
+})(); // end IIFE
