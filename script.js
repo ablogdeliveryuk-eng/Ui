@@ -58,24 +58,33 @@
 
     localStorage.setItem("sessionLocation", JSON.stringify(sessionLocation));
 
-    // Optional: display on dashboard
-    const locEl = $("user-location");
-    if (locEl) {
-      locEl.textContent = `${sessionLocation.city}, ${sessionLocation.country} (IP: ${sessionLocation.ip})`;
+    // Display each item on separate line
+    const ipEl = document.getElementById("user-ip");
+    if (ipEl) {
+      ipEl.textContent = `IP: ${sessionLocation.ip}`;
     }
 
-    // Adjust dashboard time based on timezone
-    const timeEl = $("user-time");
+    const locationEl = document.getElementById("user-location");
+    if (locationEl) {
+      locationEl.textContent = `Location: ${sessionLocation.city}, ${sessionLocation.country}`;
+    }
+
+    const timeEl = document.getElementById("user-time");
     if (timeEl) {
       const localTime = new Date().toLocaleString("en-US", { timeZone: sessionLocation.timezone });
-      timeEl.textContent = localTime;
+      timeEl.textContent = `Time: ${localTime}`;
     }
 
   } catch (e) {
     console.warn("Could not fetch IP location:", e);
+
+    // fallback text
+    document.getElementById("user-ip").textContent = "IP: N/A";
+    document.getElementById("user-location").textContent = "Location: N/A";
+    document.getElementById("user-time").textContent = `Time: ${new Date().toLocaleString()}`;
   }
 }
-                            
+
 fetchUserLocation();
     
     // ===== INITIAL TRANSACTIONS =====
