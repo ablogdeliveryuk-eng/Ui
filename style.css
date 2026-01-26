@@ -880,3 +880,35 @@ li span.description {
   color: #333; /* dark gray */
   font-weight: 500; /* medium weight */
 }
+
+/* Profile section styling */
+.profile {
+  display: flex;
+  flex-direction: column; /* stack avatar, name, info vertically */
+  align-items: center;    /* center everything horizontally */
+  text-align: center;     /* center the text under avatar */
+}
+
+.profile .avatar {
+  width: 60px;    /* adjust size if needed */
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+.profile span {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.user-info {
+  margin-top: 5px;
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: #333;
+  line-height: 1.3; /* spacing between lines */
+}
+
+.user-info p {
+  margin: 2px 0; /* small spacing for each line */
+}
