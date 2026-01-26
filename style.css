@@ -881,34 +881,32 @@ li span.description {
   font-weight: 500; /* medium weight */
 }
 
-/* Profile section styling */
+/* ===== User Info Under Profile Picture ===== */
 .profile {
   display: flex;
-  flex-direction: column; /* stack avatar, name, info vertically */
-  align-items: center;    /* center everything horizontally */
-  text-align: center;     /* center the text under avatar */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center;    /* Center avatar and text */
+  gap: 4px;               /* Small spacing between lines */
 }
 
 .profile .avatar {
-  width: 60px;    /* adjust size if needed */
+  width: 60px;            /* Adjust size if needed */
   height: 60px;
   border-radius: 50%;
-  margin-bottom: 5px;
 }
 
 .profile span {
-  font-weight: 600;
-  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .user-info {
-  margin-top: 5px;
-  font-size: 0.85rem;
-  font-weight: normal;
-  color: #333;
-  line-height: 1.3; /* spacing between lines */
+  text-align: center;     /* Make the three lines centered */
+  font-size: 0.85rem;     /* Smaller font than main navbar */
+  color: #333;            /* Optional: softer text color */
+  line-height: 1.2;       /* Tight line spacing */
 }
 
 .user-info p {
-  margin: 2px 0; /* small spacing for each line */
+  margin: 2px 0;          /* Small margin between lines */
 }
