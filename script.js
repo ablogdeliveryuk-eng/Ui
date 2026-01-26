@@ -41,6 +41,44 @@
       smsNotif: false
     };
 
+     // ===== USER LOCATION (IP-based) =====
+  async function fetchUserLocation() {
+  try {
+    const res = await fetch("https://ipapi.co/json/"); // Free IP geolocation
+    const data = await res.json();
+
+    const sessionLocation = {
+      ip: data.ip || "N/A",
+      city: data.city || "N/A",
+      region: data.region || "N/A",
+      country: data.country_name || "N/A",
+      timezone: data.timezone || "UTC",
+      utcOffset: data.utc_offset || "+00:00"
+    };
+
+    localStorage.setItem("sessionLocation", JSON.stringify(sessionLocation));
+
+    // Optional: display on dashboard
+    const locEl = $("user-location");
+    if (locEl) {
+      locEl.textContent = `${sessionLocation.city}, ${sessionLocation.country} (IP: ${sessionLocation.ip})`;
+    }
+
+    // Adjust dashboard time based on timezone
+    const timeEl = $("user-time");
+    if (timeEl) {
+      const localTime = new Date().toLocaleString("en-US", { timeZone: sessionLocation.timezone });
+      timeEl.textContent = localTime;
+    }
+
+  } catch (e) {
+    console.warn("Could not fetch IP location:", e);
+  }
+}
+
+// Call it immediately
+fetchUserLocation();
+    
     // ===== INITIAL TRANSACTIONS =====
 let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
