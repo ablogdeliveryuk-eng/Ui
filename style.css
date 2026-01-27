@@ -1008,3 +1008,16 @@ li span.description {
   top: 50%;
   transform: translateY(-50%);
 }
+
+.mini-card {
+  display: flex;
+  flex-direction: column;  /* stack label and number vertically */
+  justify-content: center; /* center vertically */
+  align-items: center;     /* center horizontally */
+}
+
+.mini-card p {
+  margin: 0;               /* remove extra margin that can shift number */
+  text-align: center;      /* center horizontally */
+  line-height: 1.2;        /* optional: tighter spacing */
+}
