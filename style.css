@@ -934,64 +934,73 @@ li span.description {
   position: relative; /* allows absolute positioning of toggle */
 }
 
- /* ===== Total Balance ===== */
+ /* ===== Total Balance Card ===== */
+.balance-card {
+  text-align: center;   /* everything inside centered */
+  padding: 20px 15px;   /* spacing inside the card */
+}
+
+/* Total Balance Label */
+.balance-card .label {
+  font-size: 14px;       /* smaller label */
+  font-weight: 500;      /* medium weight */
+  color: var(--color-muted);
+  margin-bottom: 6px;    /* space between label and number */
+  display: block;
+}
+
+/* Total Balance Number */
 .balance-card .balance {
-  font-size: 24px;       /* slightly bigger than mini balances */
-  font-weight: 600;      /* bold but professional */
+  font-size: 22px;       /* bold but not too big */
+  font-weight: 600;
   color: var(--color-primary);
-  text-align: center;
-  margin: 12px 0 18px 0; /* more space below total balance */
+  margin: 0 0 20px 0;    /* space below before mini-cards */
   white-space: nowrap;
 }
 
 /* ===== Mini-Cards Container ===== */
 .mini-cards {
   display: flex;
-  gap: 18px;             /* wider gap to prevent numbers touching */
-  margin-top: 20px;      
-  justify-content: center; 
+  gap: 20px;             /* clear separation */
+  justify-content: center;
+  margin-top: 0;
 }
 
 /* ===== Individual Mini Card ===== */
 .mini-card {
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  align-items: center;    
-  width: 48%;              
-  padding: 12px 10px;      
-  text-align: center;
-  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  width: 45%;            /* enough space for each card */
+  padding: 10px;
   border-radius: var(--radius-sm);
   background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
-}
-
-/* Mini card label */
-.mini-card h4 {
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 6px;     
   text-align: center;
-  color: var(--color-muted);
 }
 
-/* Mini card balance numbers */
+/* Mini Card Label */
+.mini-card h4 {
+  font-size: 12px;       /* smaller label */
+  font-weight: 500;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+/* Mini Card Balance */
 .mini-card p {
-  font-size: clamp(12px, 1.4vw, 14px); /* slightly smaller max than before */
-  font-weight: 500;                     
-  line-height: 1.3;                     
-  margin: 0 0 6px 0;                    
+  font-size: 13px;       /* smaller number */
+  font-weight: 500;      /* bold but not too heavy */
   color: var(--color-primary);
-  white-space: nowrap;                  
+  margin: 0 0 4px 0;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
 }
 
-/* Mini card small text */
+/* Mini Card Small Text */
 .mini-card small {
-  display: block;
-  font-size: 12px;
-  text-align: center;
+  font-size: 11px;
   color: var(--color-muted);
 }
