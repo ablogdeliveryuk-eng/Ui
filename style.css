@@ -973,3 +973,38 @@ li span.description {
   display: block;
   text-align: center;
 }
+
+/* Total balance (center inside card ignoring toggle) */
+.balance-card .balance {
+  font-size: 24px;        /* adjust smaller if needed */
+  font-weight: 700;
+  text-align: center;      /* center text inside the card */
+  margin: 15px 0;          /* spacing above and below */
+}
+
+/* Mini card balances (checking & investment) */
+.mini-card p {
+  font-size: 16px;         /* original size */
+  font-weight: 700;
+  text-align: center;      /* center inside mini card */
+  margin: 5px 0;
+}
+
+/* Mini card labels (optional, to match previous spacing) */
+.mini-card h4 {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+/* Ensure the toggle button does not push balance */
+.balance-header {
+  justify-content: center;  /* center label and balance */
+  position: relative;       /* keeps toggle absolute */
+}
+
+#toggle-balance {
+  position: absolute;
+  right: 10px;             /* keep toggle at right */
+  top: 50%;
+  transform: translateY(-50%);
+}
