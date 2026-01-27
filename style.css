@@ -934,7 +934,7 @@ li span.description {
   position: relative; /* allows absolute positioning of toggle */
 }
 
- /* ===== Balance Card ===== */
+/* ===== Balance Card ===== */
 .balance-card {
   position: relative;
   padding: 20px 16px;
@@ -942,34 +942,34 @@ li span.description {
   background-color: var(--color-surface);
   box-shadow: var(--shadow-lg);
   width: 300px;
-  text-align: center; /* aligns label and number */
+  text-align: center;
 }
 
 /* ===== Total Balance Label (Text) ===== */
 .balance-card .balance-label {
-  display: block;
-  font-size: 14px;      /* label size */
+  font-size: 16px;       /* label on top */
   font-weight: 500;
   color: var(--color-muted);
-  margin-bottom: 6px;   /* space between label and number */
+  margin-bottom: 6px;
   text-align: center;
+  display: block;        /* ensures it’s above the number */
 }
 
 /* ===== Total Balance Number ===== */
 .balance-card .balance {
-  font-size: 22px;       /* bold and clear */
+  font-size: 24px;       /* bold and larger */
   font-weight: 600;
   color: var(--color-primary);
   text-align: center;
-  margin-bottom: 20px;   /* space below total balance */
+  margin-bottom: 20px;   /* spacing below before mini cards */
   white-space: nowrap;
 }
 
 /* ===== Toggle Balance Button ===== */
 #toggle-balance {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;              /* very top */
+  right: 8px;            /* very right corner */
   background: none;
   border: none;
   cursor: pointer;
@@ -990,7 +990,7 @@ li span.description {
 /* ===== Mini-Cards Container ===== */
 .mini-cards {
   display: flex;
-  gap: 16px;               /* space between mini-cards */
+  gap: 16px;              /* space between cards */
   justify-content: center;
   margin-top: 10px;
 }
@@ -1002,23 +1002,23 @@ li span.description {
   align-items: center;
   justify-content: center;
   width: 48%;
-  padding: 10px 8px;
+  padding: 12px 10px;
   border-radius: var(--radius-sm);
   background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
 }
 
 /* Mini card label */
 .mini-card h4 {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   margin-bottom: 4px;
   color: var(--color-muted);
   text-align: center;
 }
 
-/* Mini card balance numbers */
+/* ===== Mini card balance numbers - FIXED SMALL SIZE ===== */
 .mini-card p {
-  font-size: 16px;       /* slightly smaller than total balance */
+  font-size: 11px !important;    /* fixed smaller size */
   font-weight: 500;
   line-height: 1.2;
   margin: 0 0 4px 0;
@@ -1046,19 +1046,6 @@ li span.description {
     font-size: 20px;
   }
   .mini-card p {
-    font-size: 14px;
+    font-size: 10px !important;    /* smaller for mobile */
   }
-}
-
-/* ===== Mini card balance numbers ===== */
-.mini-card p {
-  font-size: 11px;       /* smaller than total balance number */
-  font-weight: 500;
-  line-height: 1.2;
-  margin: 0 0 4px 0;
-  color: var(--color-primary);
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
