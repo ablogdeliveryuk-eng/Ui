@@ -934,46 +934,35 @@ li span.description {
   position: relative; /* allows absolute positioning of toggle */
 }
 
-/* ===== Toggle Button ===== */
-#toggle-balance {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #555;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-}
-
 /* ===== Total Balance ===== */
 .balance-card .balance {
-  font-size: 22px;       /* total balance slightly smaller than before */
-  font-weight: 600;      /* professional weight */
+  font-size: 22px;       /* main total balance */
+  font-weight: 600;      /* bold but not too heavy */
   color: var(--color-primary);
   text-align: center;
   margin: 12px 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* ===== Mini-Cards (Checking & Investment) ===== */
+.mini-cards {
+  display: flex;
+  gap: 12px;             /* small gap between mini-cards to avoid touching */
+  margin-top: 15px;
+  justify-content: center; /* center the row */
+}
+
 .mini-card {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* vertical centering */
-  align-items: center;     /* horizontal centering */
-  width: 48%;              /* two cards side by side */
-  padding: 12px;
+  justify-content: center; 
+  align-items: center;    
+  width: 48%;              
+  padding: 10px 8px;      /* slightly tighter padding */
   text-align: center;
   box-sizing: border-box;
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
 }
 
 /* Mini card label */
@@ -982,18 +971,19 @@ li span.description {
   font-weight: 500;
   margin-bottom: 4px;
   text-align: center;
+  color: var(--color-muted);
 }
 
-/* Mini card balance numbers (smaller than total) */
+/* Mini card balance numbers (smaller & lighter) */
 .mini-card p {
-  font-size: 14px;        /* reduced from 16px -> smaller than total */
-  font-weight: 500;       /* lighter, less bold */
+  font-size: 13px;        /* reduced further for long numbers */
+  font-weight: 500;       /* professional weight */
   line-height: 1.2;
   margin: 0;
-  white-space: nowrap;    /* prevent breaking */
+  color: var(--color-primary);
+  white-space: nowrap;    /* prevents breaking into multiple lines */
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--color-primary);
 }
 
 /* Mini card small text */
@@ -1004,11 +994,52 @@ li span.description {
   color: var(--color-muted);
 }
 
-/* ===== Balance Header (label + toggle) ===== */
-.balance-header {
+/* ===== Mini-Cards (Checking & Investment) ===== */
+.mini-cards {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;       /* keeps toggle absolute */
-  gap: 10px;
+  gap: 12px;                 /* space between cards */
+  margin-top: 15px;
+  justify-content: center;    /* center horizontally */
+}
+
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;    
+  width: 48%;                
+  padding: 10px 8px;         
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
+}
+
+/* Mini card label */
+.mini-card h4 {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-align: center;
+  color: var(--color-muted);
+}
+
+/* Mini card balance numbers - dynamic sizing */
+.mini-card p {
+  font-size: clamp(12px, 1.5vw, 14px); /* shrinks on small screens, max 14px */
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--color-primary);
+  white-space: nowrap;       /* prevents breaking */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mini card small text */
+.mini-card small {
+  display: block;
+  font-size: 12px;
+  text-align: center;
+  color: var(--color-muted);
 }
