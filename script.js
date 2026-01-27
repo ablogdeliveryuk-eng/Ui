@@ -970,21 +970,6 @@ updateBalancesUI();
       });
     }
 
-    // ===== BALANCE TOGGLE =====
-    const balanceToggleBtn = $("toggle-balance");
-    const sensitiveBalances = document.querySelectorAll(".sensitive");
-    let visible = true;
-    const originalValues = [];
-    sensitiveBalances.forEach(el => originalValues.push(el.textContent));
-    if (balanceToggleBtn) balanceToggleBtn.addEventListener("click", () => {
-      sensitiveBalances.forEach((el, index) => {
-        el.textContent = visible ? "••••••" : originalValues[index];
-        el.classList.toggle("hidden", visible);
-      });
-      balanceToggleBtn.textContent = visible ? "👁‍🗨" : "👁";
-      visible = !visible;
-    });
-
     // ===== SUCCESS MODAL & DOWNLOAD RECEIPT =====
     const successModalEl = $("success-modal");
     const closeReceiptBtn = $("close-receipt");
