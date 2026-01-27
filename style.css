@@ -943,24 +943,28 @@ li span.description {
   box-shadow: var(--shadow-lg);
   width: 300px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ===== Total Balance Label ===== */
+/* ===== Total Balance Label (TEXT) ===== */
 .balance-card .balance-label {
-  font-size: 16px;       /* smaller label */
+  font-size: 14px;        /* slightly smaller than total balance number */
   font-weight: 500;
   color: var(--color-muted);
-  margin-bottom: 6px;
+  margin-bottom: 8px;     /* space between label and number */
   text-align: center;
+  width: 100%;
 }
 
 /* ===== Total Balance Number ===== */
 .balance-card .balance {
-  font-size: 24px;       /* bold enough to stand out */
+  font-size: 24px;        /* bold enough to stand out */
   font-weight: 600;
   color: var(--color-primary);
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 20px;    /* space below total balance before mini-cards */
   white-space: nowrap;
 }
 
@@ -989,9 +993,10 @@ li span.description {
 /* ===== Mini-Cards Container ===== */
 .mini-cards {
   display: flex;
-  gap: 16px;                /* enough space to prevent touching */
-  justify-content: center;   /* center row */
+  gap: 18px;               /* more space between checking & investment */
+  justify-content: center;
   margin-top: 10px;
+  width: 100%;
 }
 
 /* ===== Individual Mini Card ===== */
@@ -1000,15 +1005,15 @@ li span.description {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 48%;               /* two equal cards side by side */
-  padding: 12px 10px;
+  width: 48%;
+  padding: 10px 8px;
   border-radius: var(--radius-sm);
   background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
 }
 
 /* Mini card label */
 .mini-card h4 {
-  font-size: 13px;
+  font-size: 12px;         /* slightly smaller than before */
   font-weight: 500;
   margin-bottom: 4px;
   color: var(--color-muted);
@@ -1017,9 +1022,9 @@ li span.description {
 
 /* Mini card balance numbers */
 .mini-card p {
-  font-size: 13px;       /* smaller than total balance */
+  font-size: 12px;         /* smaller than total balance */
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.3;
   margin: 0 0 4px 0;
   color: var(--color-primary);
   text-align: center;
@@ -1030,7 +1035,7 @@ li span.description {
 
 /* Mini card small text */
 .mini-card small {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-muted);
   text-align: center;
 }
@@ -1044,7 +1049,10 @@ li span.description {
   .balance-card .balance {
     font-size: 20px;
   }
+  .balance-card .balance-label {
+    font-size: 13px;
+  }
   .mini-card p {
-    font-size: 12px;
+    font-size: 11px;
   }
 }
