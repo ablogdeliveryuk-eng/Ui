@@ -925,3 +925,16 @@ li span.description {
   padding: 6px 12px;             /* small padding for neatness */
   border-radius: 8px;            /* rounded corners for modern feel */
  }
+
+  #toggle-balance {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+  transition: color 0.2s;
+}
+
+#toggle-balance:hover {
+  color: #003087;
+}
