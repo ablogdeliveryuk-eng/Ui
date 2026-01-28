@@ -1177,36 +1177,38 @@ li span.description {
   }
 }
 
-/* ===== Professional Banking Section Titles (TEXT ONLY) ===== */
+ /* ===== Professional Banking Section Titles (TEXT ONLY – PREMIUM) ===== */
 
-/* Monthly Spending Trends title */
+.spending-trends-card h2,
 .spending-trends-card h3,
-.spending-trends-card h2 {
-  color: #1f2937;          /* professional charcoal */
-  font-weight: 600;
-  letter-spacing: 0.2px;
-}
-
-/* Quick Actions title */
+.quick-actions-card h2,
 .quick-actions-card h3,
-.quick-actions-card h2 {
-  color: #1f2937;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-}
-
-/* Recent Transactions title */
+.transactions-card h2,
 .transactions-card h3,
-.transactions-card h2 {
-  color: #1f2937;
+.send-money-card h2,
+.send-money-card h3 {
+  color: #1f2937;              /* deep charcoal */
   font-weight: 600;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
+  font-size: 15px;             /* calm, banking-sized */
+  margin-bottom: 10px;
+  position: relative;
 }
 
-/* Transfer Funds title */
-.send-money-card h3,
-.send-money-card h2 {
-  color: #1f2937;
-  font-weight: 600;
-  letter-spacing: 0.2px;
+/* subtle banking accent line */
+.spending-trends-card h2::after,
+.spending-trends-card h3::after,
+.quick-actions-card h2::after,
+.quick-actions-card h3::after,
+.transactions-card h2::after,
+.transactions-card h3::after,
+.send-money-card h2::after,
+.send-money-card h3::after {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 2px;
+  margin-top: 6px;
+  background-color: #005eb8;  /* your primary blue */
+  border-radius: 2px;
 }
