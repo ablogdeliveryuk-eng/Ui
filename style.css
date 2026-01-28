@@ -1,57 +1,54 @@
-/* ===============================
-   DESIGN TOKENS (MATURE FINTECH)
-   =============================== */
+/* Core tokens (colors, spacing, radius, shadows) */
 :root{
-  /* Surfaces */
   --color-bg: #f4f6f8;
   --color-surface: #ffffff;
-
-  /* Brand */
   --color-primary: #005eb8;
   --color-primary-strong: #0079d3;
-
-  /* Text hierarchy */
-  --color-heading: #111827;     /* premium charcoal */
-  --color-text: #374151;        /* body text */
-  --color-muted: #6b7280;       /* secondary */
-
-  /* Status */
+  --color-muted: #888;
+  --color-text: #333;
   --color-success: #1a9a3a;
   --color-danger: #d94545;
 
-  /* Radius & elevation */
   --radius-sm: 6px;
   --radius-md: 12px;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-md: 0 6px 18px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+  --shadow-sm: 0 4px 10px rgba(0,0,0,0.08);
 
-  /* Spacing */
   --space-xs: 8px;
   --space-sm: 12px;
   --space-md: 20px;
   --space-lg: 30px;
-
   --container-width: 350px;
+  --breakpoint-md: 950px;
+  --breakpoint-sm: 400px;
 }
 
-/* ===============================
-   DARK MODE
-   =============================== */
+/* Dark mode (toggle with [data-theme="dark"] on <html> or rely on user preference) */
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg: #0f1720;
     --color-surface: #0b1220;
-    --color-heading: #e5e7eb;
-    --color-text: #d1d5db;
+    --color-text: #e6eef8;
     --color-muted: #9aa6b2;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.6);
-    --shadow-md: 0 6px 18px rgba(0,0,0,0.7);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.6);
+    --shadow-sm: 0 4px 10px rgba(0,0,0,0.5);
   }
 }
+[data-theme="dark"] {
+  --color-bg: #0f1720;
+  --color-surface: #0b1220;
+  --color-text: #e6eef8;
+  --color-muted: #9aa6b2;
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.6);
+  --shadow-sm: 0 4px 10px rgba(0,0,0,0.5);
+}
 
-/* ===============================
-   RESET & BASE
-   =============================== */
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* GENERAL RESET */
 *,
 *::before,
 *::after {
@@ -62,51 +59,39 @@
 
 html, body {
   height: 100%;
-  font-family: 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  min-height: 100vh;
   color: var(--color-text);
-  line-height: 1.5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.4;
+  -webkit-text-size-adjust: 100%;
 }
 
-/* ===============================
-   ACCESSIBILITY
-   =============================== */
+/* Utility: accessible focus for keyboard users */
+:focus {
+  outline: none;
+}
 :focus-visible {
   outline: 3px solid color-mix(in srgb, var(--color-primary) 50%, white);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: calc(var(--radius-sm) + 2px);
 }
 
-/* ===============================
-   SHARED COMPONENTS
-   =============================== */
-.card {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(0,0,0,0.04);
+/* Shared components */
+.container-center {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
 }
 
-/* Section titles (IMPORTANT) */
-.section-title,
-.card h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-heading);
-  letter-spacing: 0.01em;
-  margin-bottom: 14px;
-}
-
-/* ===============================
-   BUTTONS
-   =============================== */
-button,
-.button {
+/* Buttons */
+.button,
+button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -116,132 +101,349 @@ button,
   border: none;
   font-weight: 600;
   cursor: pointer;
-  background: var(--color-primary);
+  transition: background-color 180ms ease, transform 120ms ease;
+  background-color: var(--color-primary);
   color: #fff;
-  transition: background 0.2s ease, transform 0.1s ease;
+}
+.button.secondary {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: none;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.button:hover { background-color: var(--color-primary-strong); }
+.button.secondary:hover { background-color: rgba(255,255,255,0.04); }
+
+/* Cards (shared) */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-lg);
 }
 
-button:hover,
-.button:hover {
-  background: var(--color-primary-strong);
-  transform: translateY(-1px);
+/* LOGIN CARD */
+.login-card {
+  width: var(--container-width);
+  margin: 50px auto;
+  text-align: center;
+  padding: 40px 30px;
+  box-shadow: var(--shadow-lg);
 }
 
-/* ===============================
-   NAVBAR
-   =============================== */
+.login-card h1 {
+  color: var(--color-primary);
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.login-card p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: var(--color-muted);
+}
+
+/* Inputs (reusable) */
+.input,
+.login-card input,
+.send-money-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,0,0,0.12);
+  font-size: 14px;
+  background: transparent;
+  color: inherit;
+}
+.input:focus,
+.login-card input:focus,
+.send-money-card input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 10%, transparent);
+  outline: none;
+}
+
+/* small text */
+.login-card small,
+.login-footer small {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+/* NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 18px 30px;
-  background: linear-gradient(135deg, #0a3d66, #145a96);
+  background-color: var(--color-primary);
   color: #fff;
-  box-shadow: var(--shadow-md);
 }
-
+.navbar .profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .navbar .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.25);
+  object-fit: cover;
 }
 
-/* ===============================
-   DASHBOARD LAYOUT
-   =============================== */
+/* DASHBOARD LAYOUT */
 .dashboard-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 28px;
-  padding: 32px;
+  gap: 25px;
+  padding: 30px;
 }
 
+/* Specific card widths */
 .card {
   width: 300px;
 }
 
-/* ===============================
-   BALANCE CARD
-   =============================== */
-.balance-card {
-  text-align: center;
-}
-
-.balance-card .balance-label {
-  font-size: 14px;
-  color: var(--color-muted);
-  margin-bottom: 6px;
-}
-
+/* Balance card */
 .balance-card .balance {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--color-primary);
 }
 
-/* ===============================
-   MINI CARDS
-   =============================== */
+/* mini cards */
 .mini-cards {
   display: flex;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 15px;
 }
-
 .mini-card {
-  flex: 1;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-surface) 95%, black 5%);
+  background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
+  padding: 10px;
+  border-radius: 8px;
+  width: 48%;
   text-align: center;
 }
+.mini-card h4 { font-size: 14px; color: var(--color-muted); margin-bottom: 5px; }
+.mini-card p { font-size: 16px; font-weight: 700; color: var(--color-primary); }
+.mini-card small { display: block; font-size: 12px; color: var(--color-muted); margin-top: 3px; }
 
-.mini-card h4 {
-  font-size: 13px;
-  color: var(--color-muted);
-  margin-bottom: 4px;
-}
-
-.mini-card p {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-primary);
-}
-
-/* ===============================
-   TRANSACTIONS
-   =============================== */
-.transactions-card ul {
-  list-style: none;
-}
-
+/* Transactions */
+.transactions-card ul { list-style: none; padding: 0; margin: 0; }
 .transactions-card li {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
+.transactions-card li.income span:last-child { color: var(--color-success); }
+.transactions-card li.expense span:last-child { color: var(--color-danger); }
 
-.transactions-card li.income span:last-child {
-  color: var(--color-success);
-  font-weight: 600;
+/* Send money card */
+.send-money-card .button { width: 100%; padding: 12px; }
+
+/* Chart card */
+.card.chart-card {
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.card.chart-card h3 { margin-bottom: 12px; font-size: 1.1rem; color: var(--color-text); }
+canvas#spendingChart { width: 100% !important; height: 200px !important; }
+
+/* Login links and footer */
+.login-links { text-align: center; margin: 10px 0 15px; font-size: 13px; }
+.login-links a,
+.login-footer .footer-links a {
+  color: var(--color-primary);
+  text-decoration: none;
+  margin: 0 5px;
+}
+.login-links a:hover,
+.login-footer .footer-links a:hover { text-decoration: underline; }
+
+/* Login footer */
+.login-footer { text-align: center; margin-top: 40px; font-size: 12px; color: var(--color-muted); }
+
+/* RESPONSIVE (mobile-first) */
+@media (min-width: 600px) {
+  .login-card { padding: 44px 36px; }
 }
 
-.transactions-card li.expense span:last-child {
-  color: var(--color-danger);
-  font-weight: 600;
+@media (min-width: 800px) {
+  .dashboard-container { padding: 36px; gap: 28px; }
 }
 
-/* ===============================
-   SPENDING TRENDS
-   =============================== */
+/* Larger layout changes */
+@media (min-width: 950px) {
+  /* The original breakpoint inverted (mobile-first) */
+  .dashboard-container { flex-direction: row; align-items: flex-start; }
+}
+
+@media (max-width: 400px) {
+  .login-card { width: calc(100% - 32px); padding: 30px 20px; }
+  .card { width: 100%; }
+}
+
+.send-money-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.send-money-card label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.send-money-card input,
+.send-money-card select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.send-money-card input:focus,
+.send-money-card select:focus {
+  border-color: #4bc0c0;
+  outline: none;
+}
+
+.send-money-card button {
+  padding: 12px;
+  background-color: #4bc0c0;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.send-money-card button:hover {
+  background-color: #36a5a5;
+}
+
+@media (max-width: 600px) {
+  .send-money-card form {
+    gap: 10px;
+  }
+}
+
 .spending-trends-card {
-  max-width: 800px;
   width: 100%;
+  max-width: 800px;   /* keeps it from being too wide on desktop */
+  margin: 20px auto;  /* centers it */
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: #fff;
+}
+
+#spendingChart {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+.balance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#toggle-balance {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.hidden {
+  letter-spacing: 4px;
+}
+
+/* Profile Panel */
+#profile-panel {
+  display: none;
+  position: fixed;
+  top: 60px; /* below navbar */
+  right: 20px;
+  width: 280px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  z-index: 1001;
+  font-family: Arial, sans-serif;
+  transition: all 0.3s ease;
+}
+
+#profile-panel .profile-header {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+#profile-panel .avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+#profile-panel .profile-header h3 {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+#profile-panel .profile-header p {
+  font-size: 13px;
+  color: #777;
+}
+
+#profile-panel .profile-actions {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 15px;
+}
+
+#profile-panel .profile-actions button {
+  margin: 5px 0;
+  padding: 10px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+#profile-panel .profile-actions button:hover {
+  background: #0056b3;
+}
+
+#profile-panel .profile-actions #close-profile {
+  background: #ccc;
+  color: #333;
+}
+
+#profile-panel .profile-actions #close-profile:hover {
+  background: #999;
+}
+
+.spending-trends-card {
+  width: 100%;
+  max-width: 800px;   /* optional */
   margin: 20px auto;
-  height: 320px;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: #fff;
+  height: 320px;      /* controls chart height */
 }
 
 .spending-trends-card canvas {
@@ -249,10 +451,12 @@ button:hover,
   height: 100% !important;
 }
 
-/* ===============================
-   QUICK ACTIONS
-   =============================== */
 .quick-actions-card {
+  width: 300px;
+  padding: 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  background: var(--color-surface);
   text-align: center;
 }
 
@@ -260,37 +464,715 @@ button:hover,
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 10px;
 }
 
-/* ===============================
-   FORMS
-   =============================== */
-input,
-select {
-  width: 100%;
+.quick-btn {
   padding: 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(0,0,0,0.15);
-  font-size: 14px;
-  background: transparent;
-  color: inherit;
+  border: none;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-input:focus,
-select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 10%, transparent);
-  outline: none;
+.quick-btn:hover {
+  background-color: var(--color-primary-strong);
 }
 
-/* ===============================
-   RESPONSIVE
-   =============================== */
+/* ==============================
+   INFO / LEGAL PAGES (MATCH DASHBOARD)
+   ============================== */
+
+.info-page {
+  max-width: 900px;
+  margin: 80px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.info-page h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.info-page p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 16px;
+}
+
+.info-page a {
+  display: inline-block;
+  margin-top: 25px;
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.info-page a:hover {
+  text-decoration: underline;
+}
+
+/* Footer alignment */
+.login-footer {
+  margin-top: 60px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.login-footer a {
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  color: #2563eb;
+}
+
+/* Mobile responsive */
 @media (max-width: 600px) {
-  .dashboard-container {
-    padding: 20px;
+  .info-page {
+    margin: 40px 15px;
+    padding: 25px;
   }
-  .card {
-    width: 100%;
+
+  .info-page h1 {
+    font-size: 22px;
+  }
+}
+
+.logout-btn {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background: #1d4ed8;
+}
+
+#toggleAccountNumber {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+#logoutBtn {
+  background-color: #dc3545; /* red */
+  color: #fff;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 10px;
+  border: none;
+  transition: 0.3s;
+}
+
+#logoutBtn:hover {
+  opacity: 0.85;
+}
+
+.success-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.success-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.pending {
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* ===== SUCCESS MODAL FIX FOR MOBILE ===== */
+#success-modal {
+  display: none; 
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  background: #fff;
+  border-radius: 15px;
+  padding: 25px 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  overflow-y: auto; 
+  max-height: 90vh; 
+}
+
+#success-modal h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+#success-modal button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+
+#success-modal #close-receipt {
+  background-color: #ccc;
+  color: #333;
+}
+
+.view-receipt-btn {
+  padding: 8px 14px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.view-receipt-btn:hover {
+  background-color: var(--color-primary-strong);
+  transform: translateY(-1px);
+}
+
+#download-receipt {
+  display: block;
+  margin: 15px auto 0 auto;
+}  
+
+.receipt-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+#confirm-modal {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 15px;      /* prevents modal from touching screen edges */
+  overflow-y: auto;   /* allows scrolling if modal content is taller than viewport */
+}
+
+#confirm-modal .modal-content {
+  background: white;
+  padding: 25px 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+#confirm-modal .modal-actions button {
+  margin: 10px;
+  padding: 10px 20px;
+}
+
+/* ===== CONFIRM MODAL BUTTON STYLING (CHASE-LIKE) ===== */
+#confirm-modal .modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* Cancel button */
+#confirm-modal .btn-cancel {
+  background: #e5e7eb;
+  color: #111827;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+#confirm-modal .btn-cancel:hover {
+  background: #d1d5db;
+}
+
+/* Confirm / Proceed button */
+#confirm-modal .btn-confirm {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+#confirm-modal .btn-confirm:hover {
+  background: var(--color-primary-strong);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+} 
+
+.view-receipt-btn {
+  padding: 8px 14px;
+  background-color: #4b4b4b; /* professional dark grey */
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* subtle shadow for depth */
+}
+
+.view-receipt-btn:hover {
+  background-color: #383838; /* slightly darker on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* a bit more lift on hover */
+}
+
+#download-receipt {
+  display: block;
+  margin: 15px auto 0 auto;
+  padding: 8px 14px;
+  background-color: #4b4b4b; /* same professional dark grey */
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+#download-receipt:hover {
+  background-color: #383838; /* slightly darker on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 30px;
+  
+  /* Professional subtle gradient for banking feel */
+  background: linear-gradient(135deg, #0a3d66, #145a96); /* deep, muted blues */
+  
+  color: #ffffff;
+  border-radius: 0 0 14px 14px; /* rounded bottom corners */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* soft shadow for depth */
+  transition: background 0.3s ease;
+}
+
+/* Slight hover effect on navbar items for subtle interactivity */
+.navbar .profile,
+.navbar .logout-btn,
+.navbar .welcome-text {
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.navbar .profile:hover,
+.navbar .logout-btn:hover,
+.navbar .welcome-text:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* Avatar highlight */
+.navbar .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.25); /* subtle professional border */
+}
+
+#view-history-btn {
+  background: transparent;
+  color: #005eb8;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+#view-history-btn:hover {
+  text-decoration: underline;
+}
+
+#page-loader {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #005eb8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Transaction list items layout */
+li {
+  display: flex;
+  justify-content: space-between; /* description left, amount right */
+  align-items: center;
+  padding: 8px 12px; /* subtle padding for neat spacing */
+  border-bottom: 1px solid #eee; /* optional, separates transactions */
+  font-family: Arial, sans-serif; /* clean, professional font */
+}
+
+/* Amount styling */
+li.income span.amount {
+  color: green;
+  font-weight: 600; /* slightly bold */
+}
+
+li.expense span.amount {
+  color: red;
+  font-weight: 600; /* slightly bold */
+}
+
+/* Description styling */
+li span.description {
+  color: #333; /* dark gray */
+  font-weight: 500; /* medium weight */
+}
+
+/* ===== User Info Under Profile Picture ===== */
+.profile {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center;    /* Center avatar and text */
+  gap: 4px;               /* Small spacing between lines */
+}
+
+.profile .avatar {
+  width: 60px;            /* Adjust size if needed */
+  height: 60px;
+  border-radius: 50%;
+}
+
+.profile span {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.user-info {
+  text-align: center;     /* Make the three lines centered */
+  font-size: 0.85rem;     /* Smaller font than main navbar */
+  color: #333;            /* Optional: softer text color */
+  line-height: 1.2;       /* Tight line spacing */
+}
+
+.user-info p {
+  margin: 2px 0;          /* Small margin between lines */
+}
+
+ .security-note {
+  display: flex;                 /* align icon and text horizontally */
+  align-items: center;           /* vertically center the emoji and text */
+  justify-content: center;       /* center on the page or container */
+  gap: 6px;                      /* space between the shield and text */
+  font-size: 0.85rem;            /* subtle, professional size */
+  color: #555;                   /* neutral gray for a professional look */
+  text-align: center;
+  margin: 8px 0 18px 0;          /* space above and below */
+  font-style: italic;            /* subtle emphasis without being bold */
+  background: rgba(0, 94, 184, 0.05); /* faint background to highlight the note */
+  padding: 6px 12px;             /* small padding for neatness */
+  border-radius: 8px;            /* rounded corners for modern feel */
+ }
+
+ .balance-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* keep items aligned to the left */
+  gap: 10px; /* space between "Total Balance" and the toggle button */
+  position: relative; /* allows absolute positioning of toggle */
+}
+
+ /* ===== Balance Card ===== */
+.balance-card {
+  position: relative;
+  padding: 20px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  width: 300px;
+  text-align: center;
+}
+
+/* ===== Total Balance Label (Text) ===== */
+.balance-card .balance-label {
+  font-size: 16px;       /* label on top */
+  font-weight: 500;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+  text-align: center;
+  display: block;        /* ensures it’s above the number */
+}
+
+/* ===== Total Balance Number ===== */
+.balance-card .balance {
+  font-size: 24px;       /* bold and larger */
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: 20px;   /* spacing below before mini cards */
+  white-space: nowrap;
+}
+
+/* ===== Toggle Balance Button ===== */
+#toggle-balance {
+  position: absolute;
+  top: 8px;              /* very top */
+  right: 8px;            /* very right corner */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  transition: transform 0.2s, filter 0.2s;
+}
+#toggle-balance:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* ===== Mini-Cards Container ===== */
+.mini-cards {
+  display: flex;
+  gap: 16px;              /* space between cards */
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* ===== Individual Mini Card ===== */
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48%;
+  padding: 12px 10px;
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
+}
+
+/* Mini card label */
+.mini-card h4 {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ===== Mini card balance numbers - FIXED SMALL SIZE ===== */
+.mini-card p {
+  font-size: 11px !important;    /* fixed smaller size */
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 4px 0;
+  color: var(--color-primary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mini card small text */
+.mini-card small {
+  font-size: 12px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ===== Responsive tweaks ===== */
+@media (max-width: 400px) {
+  .balance-card {
+    width: 90%;
+    padding: 16px 12px;
+  }
+  .balance-card .balance {
+    font-size: 20px;
+  }
+  .mini-card p {
+    font-size: 10px !important;    /* smaller for mobile */
+  }
+}
+
+/* ===== Balance Card ===== */
+.balance-card {
+  position: relative;
+  padding: 20px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  width: 300px;
+  text-align: center;
+}
+
+/* ===== Total Balance Header ===== */
+.balance-card .balance-header {
+  display: flex;
+  justify-content: center;  /* center the label */
+  align-items: center;
+  position: relative;       /* allows absolute positioning for toggle button */
+  margin-bottom: 8px;       /* space between label and number */
+}
+
+/* Total Balance Label (text) */
+.balance-card .balance-header h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-muted);
+  margin: 0;
+  text-align: center;
+}
+
+/* Toggle Balance Button */
+#toggle-balance {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  transition: transform 0.2s, filter 0.2s;
+}
+#toggle-balance:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* ===== Total Balance Number ===== */
+#total-balance {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 0 0 20px 0;
+  white-space: nowrap;
+}
+
+/* ===== Mini-Cards Container ===== */
+.mini-cards {
+  display: flex;
+  gap: 12px;               /* space between mini-cards */
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* ===== Individual Mini Card ===== */
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48%;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in srgb, var(--color-surface) 94%, black 0%);
+}
+
+/* Mini card label */
+.mini-card h4 {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* Mini card balance numbers (smaller than total) */
+.mini-card p {
+  font-size: 12px;  /* reduced size for both balances */
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 4px 0;
+  color: var(--color-primary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mini card small text */
+.mini-card small {
+  font-size: 12px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ===== Responsive tweaks ===== */
+@media (max-width: 400px) {
+  .balance-card {
+    width: 90%;
+    padding: 16px 12px;
+  }
+  #total-balance {
+    font-size: 20px;
+  }
+  .mini-card p {
+    font-size: 11px;  /* slightly smaller for small screens */
+  }
+  .balance-card .balance-header h3 {
+    font-size: 14px;
   }
 }
